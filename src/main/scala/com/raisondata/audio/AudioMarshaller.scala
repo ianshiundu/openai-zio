@@ -7,6 +7,7 @@ trait AudioMarshaller {
   case class TranscribeResponse(text: String)
 
   object TranscribeResponse {
-    implicit val decoder: Decoder[TranscribeResponse] = deriveDecoder[TranscribeResponse]
+    implicit val decoder: Decoder[TranscribeResponse] =
+      deriveDecoder[TranscribeResponse]
   }
 }
