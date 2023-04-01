@@ -10,7 +10,7 @@ trait SttpConfig {
 
   private val version = "v1"
 
-  val uri =  uri"$baseURL/$version/$domain/$usage"
+  val uri = uri"$baseURL/$version/$domain/$usage"
 
   val openaiAPIKey = ""
 }
