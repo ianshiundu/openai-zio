@@ -1,0 +1,44 @@
+# sbt
+# (may want to keep parts of 'project')
+bin/
+project/project
+project/target
+target/
+build/
+logs
+out
+.bsp/
+
+# eclipse
+build
+.classpath
+.project
+.settings
+.worksheet
+
+# intellij idea
+*.log
+*.iml
+*.ipr
+*.iws
+.idea
+
+# mac
+.DS_Store
+
+# other?
+.history
+.scala_dependencies
+.cache
+.cache-main
+/.settings
+/RUNNING_PID
+.hydra
+.bloop
+.metals
+
+#general
+*.class
+
+#devops
+devops/docker-files/out
