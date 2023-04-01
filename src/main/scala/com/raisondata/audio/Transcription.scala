@@ -21,9 +21,8 @@ trait Transcription {
 }
 
 object Transcription extends SttpConfig with AudioMarshaller {
-//  override def usage: String = "transcriptions"
-//
-//  override def domain: String = "/audio/"
+  override def usage: String = "transcriptions"
+  override def domain: String = "audio"
 
   def transcribe(
       filePath: String,
@@ -38,7 +37,7 @@ object Transcription extends SttpConfig with AudioMarshaller {
 
     val request =
       basicRequest
-        .post(uri"https://api.openai.com/v1/audio/transcriptions")
+        .post(uri)
         .header("Authorization", s"Bearer $openaiAPIKey")
         .contentType(MultipartFormData)
         .multipartBody(Seq(
@@ -58,6 +57,7 @@ object Transcription extends SttpConfig with AudioMarshaller {
         throw new RuntimeException(error)
       case Right(value) =>
         println(s"Audio was transcribed successfully!")
+        println(value)
         value
     })
   }
