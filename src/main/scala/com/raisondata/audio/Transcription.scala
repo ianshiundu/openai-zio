@@ -18,9 +18,9 @@ object Transcription extends SttpConfig with AudioMarshaller {
       prompt: Option[String] = None,
       responseFormat: Option[String] = None, // Enum maybe?
       temperature: Option[Int] = None,
-      language: Option[String] = None // ISO-639-1 format
-  ): ZIO[Any, Throwable, TranscribeResponse] = {
-    HttpClientZioBackend().flatMap { backend =>
+      language: Option[String] = None // ISO-639-1 format (Enum?)
+  ): ZIO[Any, Throwable, TextResponse] = HttpClientZioBackend().flatMap {
+    backend =>
       val audioFile = new File(filePath)
 
       val request =
@@ -39,7 +39,7 @@ object Transcription extends SttpConfig with AudioMarshaller {
             )
           )
           .readTimeout(5.minute.asScala)
-          .response(asJson[TranscribeResponse])
+          .response(asJson[TextResponse])
 
       send(request)
         .map(_.body match {
@@ -52,7 +52,6 @@ object Transcription extends SttpConfig with AudioMarshaller {
             value
         })
         .provide(ZLayer.succeed(backend))
-    }
   }
 
 }
