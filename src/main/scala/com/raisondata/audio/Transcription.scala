@@ -20,37 +20,40 @@ object Transcription extends SttpConfig with AudioMarshaller {
       responseFormat: Option[String] = None, // Enum maybe?
       temperature: Option[Int] = None,
       language: Option[String] = None // ISO-639-1 format
-  ): ZIO[SttpClient, Throwable, TranscribeResponse] = {
+  ): ZIO[Any, Throwable, TranscribeResponse] = {
+    HttpClientZioBackend().flatMap { backend =>
+      val audioFile = new File(filePath)
 
-    val audioFile = new File(filePath)
-
-    val request =
-      basicRequest
-        .post(uri)
-        .header("Authorization", s"Bearer $openaiAPIKey")
-        .contentType(MultipartFormData)
-        .multipartBody(
-          Seq(
-            multipartFile("file", audioFile),
-            multipart("model", model),
-            multipart("prompt", prompt),
-            multipart("response_format", responseFormat.getOrElse("json")),
-            multipart("temperature", temperature.getOrElse(0)),
-            multipart("language", language.getOrElse("en"))
+      val request =
+        basicRequest
+          .post(uri)
+          .header("Authorization", s"Bearer $openaiAPIKey")
+          .contentType(MultipartFormData)
+          .multipartBody(
+            Seq(
+              multipartFile("file", audioFile),
+              multipart("model", model),
+              multipart("prompt", prompt),
+              multipart("response_format", responseFormat.getOrElse("json")),
+              multipart("temperature", temperature.getOrElse(0)),
+              multipart("language", language.getOrElse("en"))
+            )
           )
-        )
-        .readTimeout(5.minute.asScala)
-        .response(asJson[TranscribeResponse])
+          .readTimeout(5.minute.asScala)
+          .response(asJson[TranscribeResponse])
 
-    send(request).map(_.body match {
-      case Left(error) =>
-        println(s"An error occurred while making a request $error")
-        throw new RuntimeException(error)
-      case Right(value) =>
-        println(s"Audio was transcribed successfully!")
-        println(value)
-        value
-    })
+      send(request)
+        .map(_.body match {
+          case Left(error) =>
+            println(s"An error occurred while making a request $error")
+            throw new RuntimeException(error)
+          case Right(value) =>
+            println(s"Audio was transcribed successfully!")
+            println(value)
+            value
+        })
+        .provide(ZLayer.succeed(backend))
+    }
   }
 
 }
