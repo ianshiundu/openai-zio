@@ -4,10 +4,10 @@ import io.circe._
 import io.circe.generic.semiauto._
 
 trait AudioMarshaller {
-  case class TranscribeResponse(text: String)
+  case class TextResponse(text: String)
 
-  object TranscribeResponse {
-    implicit val decoder: Decoder[TranscribeResponse] =
-      deriveDecoder[TranscribeResponse]
+  object TextResponse {
+    implicit val decoder: Decoder[TextResponse] =
+      deriveDecoder[TextResponse]
   }
 }
