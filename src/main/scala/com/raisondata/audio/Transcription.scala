@@ -1,6 +1,5 @@
 package com.raisondata.audio
 
-import io.circe
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
