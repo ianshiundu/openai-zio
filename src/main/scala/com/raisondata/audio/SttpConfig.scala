@@ -12,5 +12,4 @@ trait SttpConfig {
 
   val uri = uri"$baseURL/$version/$domain/$usage"
 
-  val openaiAPIKey = ""
 }

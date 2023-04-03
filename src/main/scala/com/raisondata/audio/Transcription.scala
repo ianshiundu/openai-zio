@@ -1,10 +1,15 @@
 package com.raisondata.audio
 
+import com.raisondata.{Language, Model, ResponseFormat}
+import com.raisondata.Language.Language
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
 import sttp.model.MediaType.MultipartFormData
 import zio._
+import com.raisondata.helpers._
+import Model.Model
+import com.raisondata.ResponseFormat.ResponseFormat
 
 import java.io.File
 
@@ -14,13 +19,20 @@ object Transcription extends SttpConfig with AudioMarshaller {
 
   def transcribe(
       filePath: String,
-      model: String = "whisper-1", // Enum maybe?
-      prompt: Option[String] = None,
-      responseFormat: Option[String] = None, // Enum maybe?
-      temperature: Option[Int] = None,
-      language: Option[String] = None // ISO-639-1 format (Enum?)
-  ): ZIO[Any, Throwable, TextResponse] = HttpClientZioBackend().flatMap {
-    backend =>
+      model: Model,
+      responseFormat: ResponseFormat,
+      temperature: Int,
+      language: Language,
+      prompt: Option[String] = None
+  )(openaiAPIKey: String): ZIO[Any, Throwable, TextResponse] =
+    HttpClientZioBackend().flatMap { backend =>
+      require(
+        temperature >= 0 && temperature <= 1,
+        throw new IllegalArgumentException(
+          "Temperature value must be between ranges 0 and 1."
+        )
+      )
+
       val audioFile = new File(filePath)
 
       val request =
@@ -31,17 +43,23 @@ object Transcription extends SttpConfig with AudioMarshaller {
           .multipartBody(
             Seq(
               multipartFile("file", audioFile),
-              multipart("model", model),
+              multipart("model", Model.parse(model)),
               multipart("prompt", prompt),
-              multipart("response_format", responseFormat.getOrElse("json")),
-              multipart("temperature", temperature.getOrElse(0)),
-              multipart("language", language.getOrElse("en"))
+              multipart(
+                "response_format",
+                ResponseFormat.parse(responseFormat)
+              ),
+              multipart("temperature", temperature),
+              multipart(
+                "language",
+                Language.parse(language)
+              )
             )
           )
           .readTimeout(5.minute.asScala)
           .response(asJson[TextResponse])
 
-      send(request)
+      makeRequest(request)(backend)
         .map(_.body match {
           case Left(error) =>
             println(s"An error occurred while making a request $error")
@@ -51,7 +69,6 @@ object Transcription extends SttpConfig with AudioMarshaller {
             println(value)
             value
         })
-        .provide(ZLayer.succeed(backend))
-  }
+    }
 
 }
