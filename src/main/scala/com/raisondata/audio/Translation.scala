@@ -1,5 +1,6 @@
 package com.raisondata.audio
 
+import com.raisondata.helpers._
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
@@ -40,16 +41,15 @@ object Translation extends SttpConfig with AudioMarshaller {
           .readTimeout(5.minute.asScala)
           .response(asJson[TextResponse])
 
-      send(request)
-        .map(_.body match {
-          case Left(error) =>
-            println(s"An error occurred while making a request $error")
-            throw new RuntimeException(error)
-          case Right(value) =>
-            println(s"Audio was transcribed successfully!")
-            println(value)
-            value
-        })
-        .provide(ZLayer.succeed(backend))
+      makeRequest(request)(backend).map(_.body match {
+        case Left(error) =>
+          println(s"An error occurred while making a request $error")
+          throw new RuntimeException(error)
+        case Right(value) =>
+          println(s"Audio was transcribed successfully!")
+          println(value)
+          value
+      })
+
   }
 }

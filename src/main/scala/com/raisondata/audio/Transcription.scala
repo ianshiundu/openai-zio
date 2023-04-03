@@ -5,6 +5,7 @@ import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
 import sttp.model.MediaType.MultipartFormData
 import zio._
+import com.raisondata.helpers._
 
 import java.io.File
 
@@ -41,7 +42,7 @@ object Transcription extends SttpConfig with AudioMarshaller {
           .readTimeout(5.minute.asScala)
           .response(asJson[TextResponse])
 
-      send(request)
+      makeRequest(request)(backend)
         .map(_.body match {
           case Left(error) =>
             println(s"An error occurred while making a request $error")
