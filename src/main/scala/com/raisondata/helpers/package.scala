@@ -17,7 +17,7 @@ package object helpers {
   ): ZIO[Any, Throwable, Response[T]] =
     (for {
       response <- send(request)
-      _ <- ZIO.logInfo(s"Making request to OpenAI")
+      _ <- ZIO.logInfo(s"Making a request to OpenAI")
       result <-
         if (response.code.isSuccess) ZIO.succeed(response)
         else if (
