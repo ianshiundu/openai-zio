@@ -8,9 +8,9 @@ import zio._
 
 package object helpers {
 
-  val maxRetries = 3
-  val initialDelay: zio.Duration = 1.second
-  val maxDelay: zio.Duration = 30.seconds
+  private val maxRetries = 3
+  private val initialDelay: zio.Duration = 1.second
+  private val maxDelay: zio.Duration = 30.seconds
 
   def makeRequest[T](request: Request[T])(implicit
       backend: WebSocketStreamBackend[Task, ZioStreams]
