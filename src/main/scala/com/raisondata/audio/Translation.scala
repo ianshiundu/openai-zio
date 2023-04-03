@@ -1,5 +1,8 @@
 package com.raisondata.audio
 
+import com.raisondata.{Model, ResponseFormat}
+import com.raisondata.Model.Model
+import com.raisondata.ResponseFormat.ResponseFormat
 import com.raisondata.helpers._
 import sttp.client4._
 import sttp.client4.circe._
@@ -16,12 +19,19 @@ object Translation extends SttpConfig with AudioMarshaller {
 
   def translate(
       filePath: String,
-      model: String = "whisper-1",
-      prompt: Option[String] = None,
-      responseFormat: Option[String] = None,
-      temperature: Option[Int] = None
-  ): ZIO[Any, Throwable, TextResponse] = HttpClientZioBackend().flatMap {
-    backend =>
+      model: Model,
+      responseFormat: ResponseFormat,
+      temperature: Int,
+      prompt: Option[String] = None
+  )(openaiAPIKey: String): ZIO[Any, Throwable, TextResponse] =
+    HttpClientZioBackend().flatMap { backend =>
+      require(
+        temperature >= 0 && temperature <= 1,
+        throw new IllegalArgumentException(
+          "Temperature value must be between ranges 0 and 1."
+        )
+      )
+
       val audioFile = new File(filePath)
 
       val request =
@@ -32,10 +42,13 @@ object Translation extends SttpConfig with AudioMarshaller {
           .multipartBody(
             Seq(
               multipartFile("file", audioFile),
-              multipart("model", model),
+              multipart("model", Model.parse(model)),
               multipart("prompt", prompt),
-              multipart("response_format", responseFormat.getOrElse("json")),
-              multipart("temperature", temperature.getOrElse(0))
+              multipart(
+                "response_format",
+                ResponseFormat.parse(responseFormat)
+              ),
+              multipart("temperature", temperature)
             )
           )
           .readTimeout(5.minute.asScala)
@@ -51,5 +64,5 @@ object Translation extends SttpConfig with AudioMarshaller {
           value
       })
 
-  }
+    }
 }
