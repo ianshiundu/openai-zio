@@ -20,11 +20,11 @@ object EditImage extends SttpConfig with ImageMarshaller {
   def editImage(
       imageToEditPath: String,
       prompt: String,
-      size: Pixel = Px1024x1024,
-      responseFormat: ResponseFormat = ResponseFormat.url,
-      imageMaskPath: Option[String] = None,
-      numberOfImages: Option[Int] = Some(1),
-      user: Option[String] = Some("123")
+      size: Pixel,
+      responseFormat: ResponseFormat,
+      imageMaskPath: Option[String],
+      numberOfImages: Option[Int],
+      user: Option[String]
   )(openaiAPIKey: String): ZIO[Any, Throwable, EditImage.ImageResponse] =
     HttpClientZioBackend().flatMap { backend =>
       val imageFile = new File(imageToEditPath)
