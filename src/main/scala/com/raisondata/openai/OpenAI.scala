@@ -1,9 +1,9 @@
-package com.raisondata
+package com.raisondata.openai
 
-import com.raisondata.Language.Language
-import com.raisondata.Model.Model
-import com.raisondata.ResponseFormat.ResponseFormat
-import com.raisondata.audio.{Transcription, Translation}
+import Language.Language
+import Model.Model
+import ResponseFormat.ResponseFormat
+import com.raisondata.openai.audio.{Transcription, Translation}
 import zio.ZIO
 
 /** @param apiKey
