@@ -1,4 +1,4 @@
-package com.raisondata
+package com.raisondata.openai
 
 /**
  *  Language Enums in ISO-639-1 format that get passed in the API
