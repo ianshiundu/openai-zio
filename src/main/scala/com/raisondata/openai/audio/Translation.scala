@@ -1,9 +1,9 @@
-package com.raisondata.audio
+package com.raisondata.openai.audio
 
-import com.raisondata.{Model, ResponseFormat}
-import com.raisondata.Model.Model
-import com.raisondata.ResponseFormat.ResponseFormat
-import com.raisondata.helpers._
+import com.raisondata.openai.Model.Model
+import com.raisondata.openai.ResponseFormat.ResponseFormat
+import com.raisondata.openai.helpers.makeRequest
+import com.raisondata.openai.{Model, ResponseFormat}
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._

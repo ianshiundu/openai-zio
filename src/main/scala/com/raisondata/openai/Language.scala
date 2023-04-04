@@ -1,4 +1,8 @@
-package com.raisondata
+package com.raisondata.openai
+
+/**
+ *  Language Enums in ISO-639-1 format that get passed in the API
+ *  @see <a href="https://platform.openai.com/docs/api-reference/audio/create#audio/create-language">Language</a>*/
 
 object Language extends Enumeration {
   type Language = Value

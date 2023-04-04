@@ -1,5 +1,11 @@
-package com.raisondata
+package com.raisondata.openai
 
+/** Model Enums for the models compatible with the OpenAI API endpoints
+  * @see
+  *   <a
+  *   href="https://platform.openai.com/docs/models/model-endpoint-compatibility">Model
+  *   Endpoint Compatibility</a>
+  */
 object Model extends Enumeration {
   type Model = Value
   val gpt_4, gpt_3_5_turbo, gpt_3_5_turbo_0301, text_davinci_003,

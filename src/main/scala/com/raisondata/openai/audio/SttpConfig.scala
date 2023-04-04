@@ -1,4 +1,4 @@
-package com.raisondata.audio
+package com.raisondata.openai.audio
 
 import sttp.client4.UriContext
 
