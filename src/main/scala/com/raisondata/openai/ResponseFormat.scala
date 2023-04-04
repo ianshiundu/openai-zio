@@ -1,5 +1,11 @@
 package com.raisondata
 
+/** Response Enums supported by the Open AI endpoints.
+  * @see
+  *   <a
+  *   href="https://platform.openai.com/docs/api-reference/audio/create#audio/create-response_format">Response
+  *   Format</a>
+  */
 object ResponseFormat extends Enumeration {
   type ResponseFormat = Value
 
