@@ -1,4 +1,4 @@
-package com.raisondata
+package com.raisondata.openai
 
 /** Response Enums supported by the Open AI endpoints.
   * @see
