@@ -19,10 +19,10 @@ object ImageVariation extends SttpConfig with ImageMarshaller {
 
   def getVariations(
       imagePath: String,
-      size: Pixel = Px1024x1024,
-      responseFormat: ResponseFormat = ResponseFormat.url,
-      numberOfImages: Option[Int] = Some(1),
-      user: Option[String] = Some("Foo")
+      size: Pixel,
+      responseFormat: ResponseFormat,
+      numberOfImages: Option[Int],
+      user: Option[String]
   )(openaiAPIKey: String): ZIO[Any, Throwable, ImageVariation.ImageResponse] =
     HttpClientZioBackend().flatMap { backend =>
       val imageFile = new File(imagePath)
