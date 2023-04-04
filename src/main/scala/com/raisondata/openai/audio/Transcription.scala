@@ -1,15 +1,15 @@
-package com.raisondata.audio
+package com.raisondata.openai.audio
 
-import com.raisondata.{Language, Model, ResponseFormat}
-import com.raisondata.Language.Language
+import com.raisondata.openai.Language.Language
+import com.raisondata.openai.Model.Model
+import com.raisondata.openai.ResponseFormat.ResponseFormat
+import com.raisondata.openai.helpers.makeRequest
+import com.raisondata.openai.{Language, Model, ResponseFormat}
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
 import sttp.model.MediaType.MultipartFormData
 import zio._
-import com.raisondata.helpers._
-import Model.Model
-import com.raisondata.ResponseFormat.ResponseFormat
 
 import java.io.File
 
