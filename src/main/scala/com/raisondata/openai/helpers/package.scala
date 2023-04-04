@@ -1,4 +1,4 @@
-package com.raisondata
+package com.raisondata.openai
 
 import sttp.capabilities.zio.ZioStreams
 import sttp.client4._
