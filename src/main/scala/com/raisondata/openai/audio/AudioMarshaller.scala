@@ -1,4 +1,4 @@
-package com.raisondata.audio
+package com.raisondata.openai.audio
 
 import io.circe._
 import io.circe.generic.semiauto._
