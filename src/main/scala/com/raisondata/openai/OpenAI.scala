@@ -4,6 +4,7 @@ import Language.Language
 import Model.Model
 import ResponseFormat.ResponseFormat
 import com.raisondata.openai.audio.{Transcription, Translation}
+import com.raisondata.openai.images.{EditImage, GenerateImage, ImageVariation}
 import zio.ZIO
 
 /** @param apiKey
@@ -104,6 +105,58 @@ class OpenAI(apiKey: String) {
         temperature,
         prompt
       )(apiKey)
+  }
+
+  object Images {
+    def generateImage(
+        prompt: String,
+        user: Option[String],
+        size: Pixel = Px1024x1024,
+        responseFormat: ResponseFormat = ResponseFormat.url,
+        numberOfImages: Option[Int] = Some(1)
+    ): ZIO[Any, Throwable, GenerateImage.ImageResponse] =
+      GenerateImage.generateImage(
+        prompt,
+        size,
+        responseFormat,
+        user,
+        numberOfImages
+      )(apiKey)
+
+    def editImage(
+        imageToEditPath: String,
+        prompt: String,
+        user: Option[String],
+        size: Pixel = Px1024x1024,
+        responseFormat: ResponseFormat = ResponseFormat.url,
+        imageMaskPath: Option[String] = None,
+        numberOfImages: Option[Int] = Some(1) // default 1
+    ): ZIO[Any, Throwable, EditImage.ImageResponse] =
+      EditImage.editImage(
+        imageToEditPath,
+        prompt,
+        size,
+        responseFormat,
+        imageMaskPath,
+        numberOfImages,
+        user
+      )(apiKey)
+
+    def getVariations(
+        imagePath: String,
+        user: Option[String],
+        size: Pixel = Px1024x1024,
+        responseFormat: ResponseFormat = ResponseFormat.url,
+        numberOfImages: Option[Int] = Some(1) // default 1
+    ): ZIO[Any, Throwable, ImageVariation.ImageResponse] =
+      ImageVariation.getVariations(
+        imagePath,
+        size,
+        responseFormat,
+        numberOfImages,
+        user
+      )(apiKey)
+
   }
 
 }
