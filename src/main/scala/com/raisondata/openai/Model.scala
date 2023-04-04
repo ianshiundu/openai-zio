@@ -1,4 +1,4 @@
-package com.raisondata
+package com.raisondata.openai
 
 /** Model Enums for the models compatible with the OpenAI API endpoints
   * @see
