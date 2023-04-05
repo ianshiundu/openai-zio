@@ -107,7 +107,35 @@ class OpenAI(apiKey: String) {
       )(apiKey)
   }
 
+  /** Given a prompt and/or an input image, the model will generate a new image.
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/images">Images</a>
+    */
   object Images {
+
+    /** Creates an image given a prompt.
+      *
+      * @param prompt
+      *   Required A text description of the desired image(s). The maximum
+      *   length is 1000 characters.
+      * @param user
+      *   A unique identifier representing your end-user, which can help OpenAI
+      *   to monitor and detect abuse.
+      * @param size
+      *   Defaults to 1024x1024 The size of the generated images. Must be one of
+      *   Px256x256, Px512x512, or Px1024x1024
+      * @param responseFormat
+      *   Optional Defaults to url The format in which the generated images are
+      *   returned. Must be one of url or b64_json.
+      * @param numberOfImages
+      *   Optional Defaults to 1 The number of images to generate. Must be
+      *   between 1 and 10.
+      * @see
+      *   <a
+      *   href="https://platform.openai.com/docs/api-reference/images/create">Create
+      *   Image</a>
+      */
     def generateImage(
         prompt: String,
         user: Option[String],
@@ -123,6 +151,37 @@ class OpenAI(apiKey: String) {
         numberOfImages
       )(apiKey)
 
+    /** Creates an edited or extended image given an original image and a
+      * prompt.
+      *
+      * @param prompt
+      *   Required A text description of the desired image(s). The maximum
+      *   length is 1000 characters.
+      * @param user
+      *   A unique identifier representing your end-user, which can help OpenAI
+      *   to monitor and detect abuse.
+      * @param size
+      *   Defaults to 1024x1024 The size of the generated images. Must be one of
+      *   Px256x256, Px512x512, or Px1024x1024
+      * @param responseFormat
+      *   Optional Defaults to url The format in which the generated images are
+      *   returned. Must be one of url or b64_json.
+      * @param numberOfImages
+      *   Optional Defaults to 1 The number of images to generate. Must be
+      *   between 1 and 10.
+      * @param imageToEditPath
+      *   Required The image to edit. Must be a valid PNG file, less than 4MB,
+      *   and square. If mask is not provided, image must have transparency,
+      *   which will be used as the mask.
+      * @param imageMaskPath
+      *   An additional image whose fully transparent areas (e.g. where alpha is
+      *   zero) indicate where image should be edited. Must be a valid PNG file,
+      *   less than 4MB, and have the same dimensions as image.
+      * @see
+      *   <a
+      *   href="https://platform.openai.com/docs/api-reference/images/create-edit">Create
+      *   image edit</a>
+      */
     def editImage(
         imageToEditPath: String,
         prompt: String,
@@ -142,6 +201,29 @@ class OpenAI(apiKey: String) {
         user
       )(apiKey)
 
+    /** Creates a variation of a given image.
+      *
+      * @param imagePath
+      *   Required The image to edit. Must be a valid PNG file, less than 4MB,
+      *   and square. If mask is not provided, image must have transparency,
+      *   which will be used as the mask.
+      * @param user
+      *   A unique identifier representing your end-user, which can help OpenAI
+      *   to monitor and detect abuse.
+      * @param size
+      *   Defaults to 1024x1024 The size of the generated images. Must be one of
+      *   Px256x256, Px512x512, or Px1024x1024
+      * @param responseFormat
+      *   Optional Defaults to url The format in which the generated images are
+      *   returned. Must be one of url or b64_json.
+      * @param numberOfImages
+      *   Optional Defaults to 1 The number of images to generate. Must be
+      *   between 1 and 10.
+      * @see
+      *   <a
+      *   href="https://platform.openai.com/docs/api-reference/images/create-variation">Create
+      *   image variation</a>
+      */
     def getVariations(
         imagePath: String,
         user: Option[String],
