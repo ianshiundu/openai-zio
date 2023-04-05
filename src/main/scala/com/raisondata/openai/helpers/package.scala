@@ -50,7 +50,9 @@ package object helpers {
           )
         } else
           ZIO.fail(
-            new RuntimeException(s"Request failed with status ${response.code}")
+            new RuntimeException(
+              s"Request failed with status ${response.code} ${response.body}"
+            )
           )
     } yield result).provide(ZLayer.succeed(backend))
 }
