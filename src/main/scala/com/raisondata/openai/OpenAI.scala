@@ -4,6 +4,8 @@ import Language.Language
 import Model.Model
 import ResponseFormat.ResponseFormat
 import com.raisondata.openai.audio.{Transcription, Translation}
+import com.raisondata.openai.chat.CreateChat
+import com.raisondata.openai.completions.CreateCompletion
 import com.raisondata.openai.images.{EditImage, GenerateImage, ImageVariation}
 import com.raisondata.openai.models.OpenAIModels
 import zio.ZIO
@@ -261,6 +263,177 @@ class OpenAI(apiKey: String) {
       */
     def getModel(model: String): ZIO[Any, Throwable, OpenAIModels.Model] =
       OpenAIModels.getModel(model)(apiKey)
+  }
+
+  /** Given a prompt, the model will return one or more predicted completions,
+    * and can also return the probabilities of alternative tokens at each
+    * position.
+    *
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/completions">Completions</a>
+    */
+  object Completions {
+
+    /** Creates a completion for the provided prompt and parameters
+      * @param model
+      *   Required ID of the model to use. You can use `Models.listModels` to
+      *   see all available models
+      * @param prompt
+      *   The prompt(s) to generate completions for, encoded as a string.
+      * @param user
+      *   A unique identifier representing your end-user, which can help OpenAI
+      *   to monitor and detect abuse
+      * @param max_tokens
+      *   The maximum number of tokens to generate in the completion.
+      * @param temperature
+      *   What sampling temperature to use, between 0 and 2. Higher values like
+      *   0.8 will make the output more random, while lower values like 0.2 will
+      *   make it more focused and deterministic.
+      * @param top_p
+      *   An alternative to sampling with temperature, called nucleus sampling,
+      *   where the model considers the results of the tokens with top_p
+      *   probability mass.
+      * @param n
+      *   How many completions to generate for each prompt.
+      * @param stream
+      *   Whether to stream back partial progress. If set, tokens will be sent
+      *   as data-only server-sent events as they become available, with the
+      *   stream terminated by a data: [DONE] message.
+      * @param echo
+      *   Echo back the prompt in addition to the completion.
+      * @param presence_penalty
+      *   Number between -2.0 and 2.0. Positive values penalize new tokens based
+      *   on whether they appear in the text so far, increasing the model's
+      *   likelihood to talk about new topics.
+      * @param frequency_penalty
+      *   Number between -2.0 and 2.0. Positive values penalize new tokens based
+      *   on their existing frequency in the text so far, decreasing the model's
+      *   likelihood to repeat the same line verbatim.
+      * @param best_of
+      *   Generates best_of completions server-side and returns the "best" (the
+      *   one with the highest log probability per token). Results cannot be
+      *   streamed.
+      * @param logit_bias
+      *   Modify the likelihood of specified tokens appearing in the completion.
+      * @param logprobs
+      *   Include the log probabilities on the logprobs most likely tokens, as
+      *   well the chosen tokens.
+      * @param suffix
+      *   The suffix that comes after a completion of inserted text.
+      */
+    def createCompletion(
+        model: String, // update this later to use Model ADT
+        prompt: String = "<|endoftext|>",
+        user: Option[String],
+        max_tokens: Int = 16,
+        temperature: Double = 1,
+        top_p: Double = 1,
+        n: Int = 1,
+        stream: Boolean = false,
+        echo: Boolean = false,
+        presence_penalty: Double = 0,
+        frequency_penalty: Double = 0,
+        best_of: Int = 1,
+        logit_bias: Map[String, Double] = Map(),
+        stop: Option[Array[String]] = None,
+        logprobs: Option[Int] = None,
+        suffix: Option[String] = None
+    ): ZIO[Any, Throwable, CreateCompletion.CompletionResponse] =
+      CreateCompletion.createCompletion(
+        model,
+        prompt,
+        user,
+        max_tokens,
+        temperature,
+        top_p,
+        n,
+        stream,
+        echo,
+        presence_penalty,
+        frequency_penalty,
+        best_of,
+        logit_bias,
+        stop,
+        logprobs,
+        suffix
+      )(apiKey)
+  }
+
+  /** Given a chat conversation, the model will return a chat completion
+    * response.
+    *
+    * @see
+    *   <a href="https://platform.openai.com/docs/api-reference/chat">Chat</a>
+    */
+  object Chat {
+
+    /** Creates a completion for the provided prompt and parameters
+      *
+      * @param model
+      *   Required ID of the model to use. You can use `Models.listModels` to
+      *   see all available models
+      * @param messages
+      *   The messages to generate chat completions for, in the <a
+      *   href="https://platform.openai.com/docs/guides/chat/introduction">chat
+      *   format</a>
+      * @param user
+      *   A unique identifier representing your end-user, which can help OpenAI
+      *   to monitor and detect abuse
+      * @param max_tokens
+      *   The maximum number of tokens to generate in the chat completion.
+      * @param temperature
+      *   What sampling temperature to use, between 0 and 2. Higher values like
+      *   0.8 will make the output more random, while lower values like 0.2 will
+      *   make it more focused and deterministic.
+      * @param top_p
+      *   An alternative to sampling with temperature, called nucleus sampling,
+      *   where the model considers the results of the tokens with top_p
+      *   probability mass.
+      * @param n
+      *   How many chat completion choices to generate for each input message.
+      * @param stream
+      *   Whether to stream back partial progress. If set, tokens will be sent
+      *   as data-only server-sent events as they become available, with the
+      *   stream terminated by a data: [DONE] message.
+      * @param presence_penalty
+      *   Number between -2.0 and 2.0. Positive values penalize new tokens based
+      *   on whether they appear in the text so far, increasing the model's
+      *   likelihood to talk about new topics.
+      * @param frequency_penalty
+      *   Number between -2.0 and 2.0. Positive values penalize new tokens based
+      *   on their existing frequency in the text so far, decreasing the model's
+      *   likelihood to repeat the same line verbatim.
+      * @param logit_bias
+      *   Modify the likelihood of specified tokens appearing in the completion.
+      */
+    def createChat(
+        model: String, // update this later to use Model ADT
+        messages: List[CreateChat.Message],
+        user: Option[String],
+        temperature: Double = 1,
+        top_p: Double = 1,
+        n: Int = 1,
+        stream: Boolean = false,
+        presence_penalty: Double = 0,
+        frequency_penalty: Double = 0,
+        logit_bias: Map[String, Double] = Map(),
+        max_tokens: Option[Int] = None,
+        stop: Option[Array[String]] = None
+    ): ZIO[Any, Throwable, CreateChat.ChatResponse] = CreateChat.createChat(
+      model,
+      messages,
+      user,
+      temperature,
+      top_p,
+      n,
+      stream,
+      presence_penalty,
+      frequency_penalty,
+      logit_bias,
+      max_tokens,
+      stop
+    )(apiKey)
   }
 
 }
