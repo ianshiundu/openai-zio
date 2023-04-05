@@ -28,7 +28,7 @@ object Main extends ZIOAppDefault {
 
 ## TODO
 - [x] Images
-- [ ] Models
+- [x] Models
 - [ ] Chat
 - [ ] Edits
 - [ ] Embeddings
