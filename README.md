@@ -1,4 +1,4 @@
-# OpenAI Scala Client
+# OpenAI Scala Client (WIP 🚧)
 
 A simple Scala ZIO wrapper library to use with OpenAI's GPT-3.5+.
 
@@ -27,7 +27,7 @@ object Main extends ZIOAppDefault {
 ```
 
 ## TODO
-- [ ] Images
+- [x] Images
 - [ ] Models
 - [ ] Chat
 - [ ] Edits
