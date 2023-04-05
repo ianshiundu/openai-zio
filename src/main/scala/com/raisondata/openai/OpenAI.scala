@@ -5,6 +5,7 @@ import Model.Model
 import ResponseFormat.ResponseFormat
 import com.raisondata.openai.audio.{Transcription, Translation}
 import com.raisondata.openai.images.{EditImage, GenerateImage, ImageVariation}
+import com.raisondata.openai.models.OpenAIModels
 import zio.ZIO
 
 /** @param apiKey
@@ -239,6 +240,27 @@ class OpenAI(apiKey: String) {
         user
       )(apiKey)
 
+  }
+
+  /** List and describe the various models available in the API.
+    * @see
+    *   <a href="https://platform.openai.com/docs/models">Available Models</a>
+    */
+  object Models {
+
+    /** Lists the currently available models, and provides basic information
+      * about each one such as the owner and availability.
+      */
+    def listModels: ZIO[Any, Throwable, OpenAIModels.ListModels] =
+      OpenAIModels.listModels(apiKey)
+
+    /** Retrieves a model instance, providing basic information about the model
+      * such as the owner and permissions.
+      * @param model
+      *   Required The ID of the model to use for this request
+      */
+    def getModel(model: String): ZIO[Any, Throwable, OpenAIModels.Model] =
+      OpenAIModels.getModel(model)(apiKey)
   }
 
 }
