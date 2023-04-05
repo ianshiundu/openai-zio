@@ -17,21 +17,21 @@ object CreateCompletion extends SttpConfig with CompletionMarshaller {
 
   def createCompletion(
       model: String,
-      prompt: String = "<|endoftext|>",
-      user: Option[String] = Some(""),
-      max_tokens: Int = 16,
-      temperature: Double = 1,
-      top_p: Double = 1,
-      n: Int = 1,
-      stream: Boolean = false,
-      echo: Boolean = false,
-      presence_penalty: Double = 0,
-      frequency_penalty: Double = 0,
-      best_of: Int = 1,
-      logit_bias: Map[String, Double] = Map(), // Defaults to null
-      stop: Option[Array[String]] = None, // Defaults to null
-      logprobs: Option[Int] = None, // Defaults to null
-      suffix: Option[String] = None // Defaults to null
+      prompt: String,
+      user: Option[String],
+      max_tokens: Int,
+      temperature: Double,
+      top_p: Double,
+      n: Int,
+      stream: Boolean,
+      echo: Boolean,
+      presence_penalty: Double,
+      frequency_penalty: Double,
+      best_of: Int,
+      logit_bias: Map[String, Double],
+      stop: Option[Array[String]],
+      logprobs: Option[Int],
+      suffix: Option[String]
   )(
       openaiAPIKey: String
   ): ZIO[Any, Throwable, CreateCompletion.CompletionResponse] =

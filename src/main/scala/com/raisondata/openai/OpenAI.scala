@@ -326,7 +326,7 @@ class OpenAI(apiKey: String) {
     def createCompletion(
         model: String, // update this later to use Model ADT
         prompt: String = "<|endoftext|>",
-        user: Option[String] = Some(""),
+        user: Option[String],
         max_tokens: Int = 16,
         temperature: Double = 1,
         top_p: Double = 1,
