@@ -1,9 +1,9 @@
 package com.raisondata.openai.images
 
-import com.raisondata.openai.{Pixel, Px1024x1024, ResponseFormat}
 import com.raisondata.openai.ResponseFormat.ResponseFormat
 import com.raisondata.openai.audio.SttpConfig
 import com.raisondata.openai.helpers.makeRequest
+import com.raisondata.openai.{Pixel, ResponseFormat}
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._

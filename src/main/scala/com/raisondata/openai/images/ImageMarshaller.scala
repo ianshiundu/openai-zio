@@ -3,11 +3,9 @@ package com.raisondata.openai.images
 import io.circe._
 import io.circe.generic.semiauto._
 
-import java.time.Instant
-
 trait ImageMarshaller {
   case class DataBody(url: String)
-  case class ImageResponse(created: Instant, data: List[DataBody])
+  case class ImageResponse(data: List[DataBody])
   case class ImageRequest(
       prompt: String,
       n: Option[Int],
