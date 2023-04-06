@@ -1,13 +1,9 @@
 package com.raisondata.openai.images
 
-import com.raisondata.openai.{Pixel, Px1024x1024, ResponseFormat}
 import com.raisondata.openai.ResponseFormat.ResponseFormat
-import com.raisondata.openai.audio.SttpConfig
-import com.raisondata.openai.helpers.makeRequest
-import sttp.client4._
+import com.raisondata.openai._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
-import sttp.model.MediaType.ApplicationJson
 import zio._
 
 object GenerateImage extends SttpConfig with ImageMarshaller {
@@ -30,23 +26,19 @@ object GenerateImage extends SttpConfig with ImageMarshaller {
         )
       )
 
-      val request = basicRequest
-        .post(uri)
-        .header("Authorization", s"Bearer $openaiAPIKey")
-        .contentType(ApplicationJson)
-        .body(
-          ImageRequest(
-            prompt,
-            numberOfImages,
-            Some(size.asString),
-            Some(ResponseFormat.parse(responseFormat)),
-            user
-          )
-        )
-        .readTimeout(5.minute.asScala)
-        .response(asJson[ImageResponse])
+      val requestBody = ImageRequest(
+        prompt,
+        numberOfImages,
+        Some(size.asString),
+        Some(ResponseFormat.parse(responseFormat)),
+        user
+      )
 
-      makeRequest(request)(backend).map(_.body match {
+      val request =
+        requestWithJsonBody(requestBody, asJson[ImageResponse])(openaiAPIKey)
+      val response = getResponse(request)(backend)
+
+      response.map(_.body match {
         case Left(error) =>
           println(s"An error occurred while making a request $error")
           throw new RuntimeException(error)

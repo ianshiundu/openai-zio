@@ -3,12 +3,10 @@ package com.raisondata.openai.audio
 import com.raisondata.openai.Language.Language
 import com.raisondata.openai.Model.Model
 import com.raisondata.openai.ResponseFormat.ResponseFormat
-import com.raisondata.openai.helpers.makeRequest
-import com.raisondata.openai.{Language, Model, ResponseFormat}
+import com.raisondata.openai._
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
-import sttp.model.MediaType.MultipartFormData
 import zio._
 
 import java.io.File
@@ -35,31 +33,26 @@ object Transcription extends SttpConfig with AudioMarshaller {
 
       val audioFile = new File(filePath)
 
-      val request =
-        basicRequest
-          .post(uri)
-          .header("Authorization", s"Bearer $openaiAPIKey")
-          .contentType(MultipartFormData)
-          .multipartBody(
-            Seq(
-              multipartFile("file", audioFile),
-              multipart("model", Model.parse(model)),
-              multipart("prompt", prompt),
-              multipart(
-                "response_format",
-                ResponseFormat.parse(responseFormat)
-              ),
-              multipart("temperature", temperature),
-              multipart(
-                "language",
-                Language.parse(language)
-              )
-            )
-          )
-          .readTimeout(5.minute.asScala)
-          .response(asJson[TextResponse])
+      val body = Seq(
+        multipartFile("file", audioFile),
+        multipart("model", Model.parse(model)),
+        multipart("prompt", prompt),
+        multipart(
+          "response_format",
+          ResponseFormat.parse(responseFormat)
+        ),
+        multipart("temperature", temperature),
+        multipart(
+          "language",
+          Language.parse(language)
+        )
+      )
 
-      makeRequest(request)(backend)
+      val request =
+        requestWithMultipartForm(body, asJson[TextResponse])(openaiAPIKey)
+      val response = getResponse(request)(backend)
+
+      response
         .map(_.body match {
           case Left(error) =>
             println(s"An error occurred while making a request $error")
