@@ -1,6 +1,6 @@
 package com.raisondata.openai.models
 
-import com.raisondata.openai.audio.SttpConfig
+import com.raisondata.openai.SttpConfig
 import com.raisondata.openai.helpers.makeRequest
 import sttp.client4._
 import sttp.client4.circe._
