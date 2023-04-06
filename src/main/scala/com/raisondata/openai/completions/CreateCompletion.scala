@@ -1,11 +1,9 @@
 package com.raisondata.openai.completions
 
-import com.raisondata.openai.audio.SttpConfig
-import com.raisondata.openai.helpers.makeRequest
+import com.raisondata.openai.SttpConfig
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
-import sttp.model.MediaType.ApplicationJson
 import zio._
 
 object CreateCompletion extends SttpConfig with CompletionMarshaller {
@@ -55,15 +53,10 @@ object CreateCompletion extends SttpConfig with CompletionMarshaller {
         user
       )
 
-      val request = basicRequest
-        .post(uri)
-        .header("Authorization", s"Bearer $openaiAPIKey")
-        .contentType(ApplicationJson)
-        .body(requestBody)
-        .readTimeout(5.minute.asScala)
-        .response(asJson[CompletionResponse])
+      val request = requestWithJsonBody(requestBody, asJson[CompletionResponse])(openaiAPIKey)
+      val response = getResponse(request)(backend)
 
-      makeRequest(request)(backend).map(_.body match {
+      response.map(_.body match {
         case Left(error) =>
           println(s"An error occurred while making a request $error")
           throw new RuntimeException(error)

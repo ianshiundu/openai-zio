@@ -1,11 +1,8 @@
 package com.raisondata.openai.chat
 
-import com.raisondata.openai.audio.SttpConfig
-import com.raisondata.openai.helpers.makeRequest
-import sttp.client4._
+import com.raisondata.openai.SttpConfig
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
-import sttp.model.MediaType.ApplicationJson
 import zio._
 
 object CreateChat extends SttpConfig with ChatMarshaller {
@@ -43,15 +40,11 @@ object CreateChat extends SttpConfig with ChatMarshaller {
         stop
       )
 
-      val request = basicRequest
-        .post(uri)
-        .header("Authorization", s"Bearer $openaiAPIKey")
-        .contentType(ApplicationJson)
-        .body(requestBody)
-        .readTimeout(5.minute.asScala)
-        .response(asJson[ChatResponse])
+      val request =
+        requestWithJsonBody(requestBody, asJson[ChatResponse])(openaiAPIKey)
+      val response = getResponse(request)(backend)
 
-      makeRequest(request)(backend).map(_.body match {
+      response.map(_.body match {
         case Left(error) =>
           println(s"An error occurred while making a request $error")
           throw new RuntimeException(error)
