@@ -8,6 +8,7 @@ import com.raisondata.openai.api.chat.CreateChat
 import com.raisondata.openai.api.completions.CreateCompletion
 import com.raisondata.openai.api.edits.Edit
 import com.raisondata.openai.api.embedding.Embedding
+import com.raisondata.openai.api.files.File
 import com.raisondata.openai.api.images.{
   EditImage,
   GenerateImage,
@@ -526,6 +527,24 @@ class OpenAI(apiKey: String) {
         model: Model = Model.text_moderation_latest
     ): ZIO[Any, Throwable, Moderation.ModerationResponse] =
       Moderation.createModeration(input, model)(apiKey)
+  }
+
+  object Files {
+    def listFiles: ZIO[Any, Throwable, File.FileResponse] =
+      File.listFiles(apiKey)
+
+    def uploadFile(
+        filePath: String,
+        purpose: String
+    ): ZIO[Any, Throwable, File.FileResponse] =
+      File.uploadFile(filePath, purpose)(apiKey)
+
+    def deleteFile(
+        fileId: String
+    ): ZIO[Any, Throwable, File.FileResponse] = File.deleteFile(fileId)(apiKey)
+
+    def retrieveFile(fileId: String): ZIO[Any, Throwable, File.FileResponse] =
+      File.retrieveFile(fileId)(apiKey)
   }
 
 }
