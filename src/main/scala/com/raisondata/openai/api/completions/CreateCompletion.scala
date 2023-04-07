@@ -1,4 +1,4 @@
-package com.raisondata.openai.completions
+package com.raisondata.openai.api.completions
 
 import com.raisondata.openai.SttpConfig
 import sttp.client4._
