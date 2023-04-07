@@ -28,7 +28,7 @@ object Model extends Enumeration {
       case `text_embedding_ada_002`  => "text-embedding-ada-002"
       case `text_search_ada_doc_001` => "text-search-ada-doc-001"
       case `text_moderation_stable`  => "text-moderation-stable"
-      case `text_moderation_latest`  => "text-search-ada-doc-001"
+      case `text_moderation_latest`  => "text-moderation-latest"
       case `davinci`                 => "davinci"
       case `curie`                   => "curie"
       case `babbage`                 => "babbage"
