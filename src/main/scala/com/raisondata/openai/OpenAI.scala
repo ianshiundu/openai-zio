@@ -14,6 +14,7 @@ import com.raisondata.openai.api.images.{
   ImageVariation
 }
 import com.raisondata.openai.api.models.OpenAIModels
+import com.raisondata.openai.api.moderations.Moderation
 import zio.ZIO
 
 /** @param apiKey
@@ -502,6 +503,29 @@ class OpenAI(apiKey: String) {
         user: Option[String]
     ): ZIO[Any, Throwable, Embedding.EmbeddingResponse] =
       Embedding.createEmbeddings(model, input, user)(apiKey)
+  }
+
+  /** Given a input text, outputs if the model classifies it as violating
+    * OpenAI's content policy.
+    *
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/moderations">Moderations</a>
+    */
+  object Moderations {
+
+    /** Classifies if text violates OpenAI's Content Policy
+      * @param input
+      *   The input text to classify
+      * @param model
+      *   Two content moderations models are available: `text-moderation-stable`
+      *   and `text-moderation-latest`
+      */
+    def createModeration(
+        input: String,
+        model: Model = Model.text_moderation_latest
+    ): ZIO[Any, Throwable, Moderation.ModerationResponse] =
+      Moderation.createModeration(input, model)(apiKey)
   }
 
 }
