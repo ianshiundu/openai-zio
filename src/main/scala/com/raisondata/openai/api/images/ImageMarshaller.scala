@@ -1,4 +1,4 @@
-package com.raisondata.openai.images
+package com.raisondata.openai.api.images
 
 import io.circe._
 import io.circe.generic.semiauto._
