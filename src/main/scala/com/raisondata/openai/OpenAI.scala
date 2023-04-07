@@ -7,6 +7,7 @@ import com.raisondata.openai.api.audio.{Transcription, Translation}
 import com.raisondata.openai.api.chat.CreateChat
 import com.raisondata.openai.api.completions.CreateCompletion
 import com.raisondata.openai.api.edits.Edit
+import com.raisondata.openai.api.embedding.Embedding
 import com.raisondata.openai.api.images.{
   EditImage,
   GenerateImage,
@@ -476,6 +477,31 @@ class OpenAI(apiKey: String) {
         top_p: Double = 1
     ): ZIO[Any, Throwable, Edit.EditResponse] =
       Edit.createEdit(model, input, instruction, n, temperature, top_p)(apiKey)
+  }
+
+  /** Get a vector representation of a given input that can be easily consumed
+    * by machine learning models and algorithms.
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/embeddings">Embeddings</a>
+    */
+  object Embeddings {
+
+    /** Creates an embedding vector representing the input text.
+      * @param model
+      *   ID of the model to use.
+      * @param input
+      *   Input text to get embeddings for, encoded as a string.
+      * @param user
+      *   A unique identifier representing your end-user, which can help OpenAI
+      *   to monitor and detect abuse.
+      */
+    def createEmbeddings(
+        model: String,
+        input: String,
+        user: Option[String]
+    ): ZIO[Any, Throwable, Embedding.EmbeddingResponse] =
+      Embedding.createEmbeddings(model, input, user)(apiKey)
   }
 
 }
