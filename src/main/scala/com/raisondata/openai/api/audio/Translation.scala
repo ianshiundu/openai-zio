@@ -1,6 +1,5 @@
-package com.raisondata.openai.audio
+package com.raisondata.openai.api.audio
 
-import com.raisondata.openai.Language.Language
 import com.raisondata.openai.Model.Model
 import com.raisondata.openai.ResponseFormat.ResponseFormat
 import com.raisondata.openai._
@@ -11,16 +10,16 @@ import zio._
 
 import java.io.File
 
-object Transcription extends SttpConfig with AudioMarshaller {
-  override def usage: String = "transcriptions"
+object Translation extends SttpConfig with AudioMarshaller {
   override def domain: String = "audio"
 
-  def transcribe(
+  override def usage: String = "translations"
+
+  def translate(
       filePath: String,
       model: Model,
       responseFormat: ResponseFormat,
       temperature: Int,
-      language: Language,
       prompt: Option[String] = None
   )(openaiAPIKey: String): ZIO[Any, Throwable, TextResponse] =
     HttpClientZioBackend().flatMap { backend =>
@@ -41,27 +40,22 @@ object Transcription extends SttpConfig with AudioMarshaller {
           "response_format",
           ResponseFormat.parse(responseFormat)
         ),
-        multipart("temperature", temperature),
-        multipart(
-          "language",
-          Language.parse(language)
-        )
+        multipart("temperature", temperature)
       )
 
       val request =
         requestWithMultipartForm(body, asJson[TextResponse])(openaiAPIKey)
       val response = getResponse(request)(backend)
 
-      response
-        .map(_.body match {
-          case Left(error) =>
-            println(s"An error occurred while making a request $error")
-            throw new RuntimeException(error)
-          case Right(value) =>
-            println(s"Audio was transcribed successfully!")
-            println(value)
-            value
-        })
-    }
+      response.map(_.body match {
+        case Left(error) =>
+          println(s"An error occurred while making a request $error")
+          throw new RuntimeException(error)
+        case Right(value) =>
+          println(s"Audio was transcribed successfully!")
+          println(value)
+          value
+      })
 
+    }
 }
