@@ -1,59 +1,47 @@
-package com.raisondata.openai.completions
+package com.raisondata.openai.api.chat
 
 import com.raisondata.openai.SttpConfig
-import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
 import zio._
 
-object CreateCompletion extends SttpConfig with CompletionMarshaller {
-  override def domain: String = "completions"
+object CreateChat extends SttpConfig with ChatMarshaller {
+  override def domain: String = "chat"
 
-  override def usage: String = ""
+  override def usage: String = "completions"
 
-  override val uri = uri"https://api.openai.com/v1/$domain"
-
-  def createCompletion(
+  def createChat(
       model: String,
-      prompt: String,
+      messages: List[Message],
       user: Option[String],
-      max_tokens: Int,
       temperature: Double,
       top_p: Double,
       n: Int,
       stream: Boolean,
-      echo: Boolean,
       presence_penalty: Double,
       frequency_penalty: Double,
-      best_of: Int,
       logit_bias: Map[String, Double],
-      stop: Option[Array[String]],
-      logprobs: Option[Int],
-      suffix: Option[String]
-  )(
-      openaiAPIKey: String
-  ): ZIO[Any, Throwable, CreateCompletion.CompletionResponse] =
+      max_tokens: Option[Int],
+      stop: Option[Array[String]]
+  )(openaiAPIKey: String): ZIO[Any, Throwable, CreateChat.ChatResponse] =
     HttpClientZioBackend().flatMap { backend =>
-      val requestBody = CompletionRequest(
+      val requestBody = ChatRequest(
         model,
-        prompt,
-        suffix,
+        messages,
+        user,
         max_tokens,
         temperature,
         top_p,
         n,
         stream,
-        logprobs,
-        echo,
-        stop,
         presence_penalty,
         frequency_penalty,
-        best_of,
         logit_bias,
-        user
+        stop
       )
 
-      val request = requestWithJsonBody(requestBody, asJson[CompletionResponse])(openaiAPIKey)
+      val request =
+        requestWithJsonBody(requestBody, asJson[ChatResponse])(openaiAPIKey)
       val response = getResponse(request)(backend)
 
       response.map(_.body match {
@@ -61,10 +49,9 @@ object CreateCompletion extends SttpConfig with CompletionMarshaller {
           println(s"An error occurred while making a request $error")
           throw new RuntimeException(error)
         case Right(value) =>
-          println(s"Text completion was successful!")
+          println(s"Chat reply was successful returned!")
           println(value)
           value
       })
-
     }
 }

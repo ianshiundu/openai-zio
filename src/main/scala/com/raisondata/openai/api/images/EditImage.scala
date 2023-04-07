@@ -1,4 +1,4 @@
-package com.raisondata.openai.images
+package com.raisondata.openai.api.images
 
 import com.raisondata.openai.ResponseFormat.ResponseFormat
 import com.raisondata.openai._

@@ -3,11 +3,16 @@ package com.raisondata.openai
 import Language.Language
 import Model.Model
 import ResponseFormat.ResponseFormat
-import com.raisondata.openai.audio.{Transcription, Translation}
-import com.raisondata.openai.chat.CreateChat
-import com.raisondata.openai.completions.CreateCompletion
-import com.raisondata.openai.images.{EditImage, GenerateImage, ImageVariation}
-import com.raisondata.openai.models.OpenAIModels
+import com.raisondata.openai.api.audio.{Transcription, Translation}
+import com.raisondata.openai.api.chat.CreateChat
+import com.raisondata.openai.api.completions.CreateCompletion
+import com.raisondata.openai.api.edits.Edit
+import com.raisondata.openai.api.images.{
+  EditImage,
+  GenerateImage,
+  ImageVariation
+}
+import com.raisondata.openai.api.models.OpenAIModels
 import zio.ZIO
 
 /** @param apiKey
@@ -434,6 +439,43 @@ class OpenAI(apiKey: String) {
       max_tokens,
       stop
     )(apiKey)
+  }
+
+  /** Given a prompt and an instruction, the model will return an edited version
+    * of the prompt.
+    * @see
+    *   <a href="https://platform.openai.com/docs/api-reference/edits">Edits</a>
+    */
+  object Edits {
+
+    /** Creates a new edit for the provided input, instruction, and parameters.
+      * @param model
+      *   Required ID of the model to use. You can use `Models.listModels` to
+      *   see all available models
+      * @param input
+      *   The input text to use as a starting point for the edit.
+      * @param instruction
+      *   The instruction that tells the model how to edit the prompt.
+      * @param temperature
+      *   What sampling temperature to use, between 0 and 2. Higher values like
+      *   0.8 will make the output more random, while lower values like 0.2 will
+      *   make it more focused and deterministic.
+      * @param top_p
+      *   An alternative to sampling with temperature, called nucleus sampling,
+      *   where the model considers the results of the tokens with top_p
+      *   probability mass.
+      * @param n
+      *   How many chat completion choices to generate for each input message.
+      */
+    def createEdit(
+        model: String,
+        input: String,
+        instruction: String,
+        n: Int = 1,
+        temperature: Double = 1,
+        top_p: Double = 1
+    ): ZIO[Any, Throwable, Edit.EditResponse] =
+      Edit.createEdit(model, input, instruction, n, temperature, top_p)(apiKey)
   }
 
 }

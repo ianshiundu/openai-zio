@@ -1,4 +1,4 @@
-package com.raisondata.openai.chat
+package com.raisondata.openai.api.chat
 
 import io.circe._
 import io.circe.generic.semiauto._
