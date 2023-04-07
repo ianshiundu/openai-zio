@@ -14,9 +14,9 @@ trait SttpConfig {
   def usage: String
   def domain: String
 
-  private val baseURL = "https://api.openai.com"
+  val baseURL = "https://api.openai.com"
 
-  private val version = "v1"
+  val version = "v1"
 
   private val readTimeout = 5.minute.asScala
 

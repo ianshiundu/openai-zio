@@ -30,7 +30,7 @@ object Main extends ZIOAppDefault {
 - [x] Images
 - [x] Models
 - [x] Chat
-- [ ] Edits
+- [x] Edits
 - [ ] Embeddings
 - [ ] Files
 - [ ] Fine-tunes

@@ -1,4 +1,4 @@
-package com.raisondata.openai.models
+package com.raisondata.openai.api.models
 
 import io.circe._
 import io.circe.generic.semiauto._

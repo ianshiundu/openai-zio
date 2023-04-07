@@ -1,4 +1,4 @@
-package com.raisondata.openai.models
+package com.raisondata.openai.api.models
 
 import com.raisondata.openai.SttpConfig
 import com.raisondata.openai.helpers.makeRequest

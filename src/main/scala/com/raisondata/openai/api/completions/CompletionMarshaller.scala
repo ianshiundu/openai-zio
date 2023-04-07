@@ -1,4 +1,4 @@
-package com.raisondata.openai.completions
+package com.raisondata.openai.api.completions
 
 import io.circe._
 import io.circe.generic.semiauto._
