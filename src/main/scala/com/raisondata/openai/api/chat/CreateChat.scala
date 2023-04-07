@@ -1,4 +1,4 @@
-package com.raisondata.openai.chat
+package com.raisondata.openai.api.chat
 
 import com.raisondata.openai.SttpConfig
 import sttp.client4.circe._
