@@ -30,6 +30,7 @@ trait EditMarshaller {
 
   case class EditResponse(
       `object`: String,
+      created: Long,
       choices: List[Choices],
       usage: Usage
   )

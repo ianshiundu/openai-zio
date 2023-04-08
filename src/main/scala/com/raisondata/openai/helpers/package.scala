@@ -39,8 +39,8 @@ package object helpers {
         else if (
           response.code == StatusCode.TooManyRequests && maxRetries > 0
         ) {
-          println(
-            s" Too many requests were made retrying after 1 minute = ${response.code}"
+          ZIO.logInfo(
+            "Too many requests were made retrying after 1 minute = ${response.code}"
           )
           val delay = 60.seconds
           ZIO.sleep(delay) *> makeRequest(request).retry(
