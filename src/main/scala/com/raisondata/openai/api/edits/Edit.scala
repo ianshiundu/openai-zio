@@ -30,15 +30,15 @@ object Edit extends SttpConfig with EditMarshaller {
 
       val response = getResponse(request)(backend)
 
-      response
-        .map(_.body match {
-          case Left(error) =>
-            println(s"An error occurred while making a request $error")
-            throw new RuntimeException(error)
-          case Right(value) =>
-            println(s"Text was edited successfully!")
-            println(value)
-            value
-        })
+      response.flatMap(_.body match {
+        case Left(error) =>
+          for {
+            _ <- ZIO.logError(s"An error occurred while making a request $error")
+          } yield throw new RuntimeException(error)
+        case Right(response) =>
+          for {
+            _ <- ZIO.logInfo("Text was edited successfully!")
+          } yield response
+      })
     }
 }

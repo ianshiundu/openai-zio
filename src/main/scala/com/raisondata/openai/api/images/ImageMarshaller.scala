@@ -5,7 +5,7 @@ import io.circe.generic.semiauto._
 
 trait ImageMarshaller {
   case class DataBody(url: String)
-  case class ImageResponse(data: List[DataBody])
+  case class ImageResponse(created: Long, data: List[DataBody])
   case class ImageRequest(
       prompt: String,
       n: Option[Int],
