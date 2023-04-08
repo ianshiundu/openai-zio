@@ -32,6 +32,6 @@ object Main extends ZIOAppDefault {
 - [x] Chat
 - [x] Edits
 - [x] Embeddings
-- [ ] Files
+- [x] Files
 - [ ] Fine-tunes
-- [ ] Moderations
+- [x] Moderations

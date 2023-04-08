@@ -529,20 +529,43 @@ class OpenAI(apiKey: String) {
       Moderation.createModeration(input, model)(apiKey)
   }
 
+  /** Files are used to upload documents that can be used with features like
+    * Fine-tuning.
+    *
+    * @see
+    *   <a href="https://platform.openai.com/docs/api-reference/files">Files</a>
+    */
   object Files {
+
+    /** Returns a list of files that belong to the user's organization. */
     def listFiles: ZIO[Any, Throwable, File.FileResponse] =
       File.listFiles(apiKey)
 
+    /** Upload a file that contains document(s) to be used across various
+      * endpoints/features.
+      * @param filePath
+      *   Required Name of the JSON Lines file to be uploaded.
+      * @param purpose
+      *   Required The intended purpose of the uploaded documents.
+      */
     def uploadFile(
         filePath: String,
         purpose: String
     ): ZIO[Any, Throwable, File.FileResponse] =
       File.uploadFile(filePath, purpose)(apiKey)
 
+    /** Delete a file.
+      * @param fileId
+      *   Required The ID of the file to use for this request
+      */
     def deleteFile(
         fileId: String
     ): ZIO[Any, Throwable, File.FileResponse] = File.deleteFile(fileId)(apiKey)
 
+    /** Returns information about a specific file.
+      * @param fileId
+      *   Required The ID of the file to use for this request.
+      */
     def retrieveFile(fileId: String): ZIO[Any, Throwable, File.FileResponse] =
       File.retrieveFile(fileId)(apiKey)
   }
