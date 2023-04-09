@@ -1,6 +1,7 @@
 package com.raisondata.openai.api.embedding
 
-import com.raisondata.openai.SttpConfig
+import com.raisondata.openai.Model.Model
+import com.raisondata.openai.{Model, SttpConfig}
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
@@ -14,11 +15,11 @@ object Embedding extends SttpConfig with EmbeddingMarshaller {
 
   override val uri: Uri = uri"$baseURL/$version/$domain"
 
-  def createEmbeddings(model: String, input: String, user: Option[String])(
+  def createEmbeddings(model: Model, input: String, user: Option[String])(
       openaiAPIKey: String
   ): ZIO[Any, Throwable, Embedding.EmbeddingResponse] =
     HttpClientZioBackend().flatMap { backend =>
-      val requestBody = EmbeddingRequest(model, input, user)
+      val requestBody = EmbeddingRequest(Model.parse(model), input, user)
 
       val request =
         requestWithJsonBody(requestBody, asJson[EmbeddingResponse])(
