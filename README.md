@@ -1,4 +1,4 @@
-# OpenAI Scala Client (WIP 🚧)
+# OpenAI Scala Client (WIP 🚧) [![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 
 A simple Scala ZIO wrapper library to use with OpenAI's GPT-3.5+.
 
