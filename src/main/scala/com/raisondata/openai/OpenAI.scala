@@ -331,7 +331,7 @@ class OpenAI(apiKey: String) {
       *   The suffix that comes after a completion of inserted text.
       */
     def createCompletion(
-        model: Model, // update this later to use Model ADT
+        model: Model,
         prompt: String = "<|endoftext|>",
         user: Option[String],
         max_tokens: Int = 16,
