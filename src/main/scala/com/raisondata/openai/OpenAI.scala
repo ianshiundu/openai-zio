@@ -331,7 +331,7 @@ class OpenAI(apiKey: String) {
       *   The suffix that comes after a completion of inserted text.
       */
     def createCompletion(
-        model: String, // update this later to use Model ADT
+        model: Model, // update this later to use Model ADT
         prompt: String = "<|endoftext|>",
         user: Option[String],
         max_tokens: Int = 16,
@@ -416,7 +416,7 @@ class OpenAI(apiKey: String) {
       *   Modify the likelihood of specified tokens appearing in the completion.
       */
     def createChat(
-        model: String, // update this later to use Model ADT
+        model: Model,
         messages: List[CreateChat.Message],
         user: Option[String],
         temperature: Double = 1,
@@ -471,7 +471,7 @@ class OpenAI(apiKey: String) {
       *   How many chat completion choices to generate for each input message.
       */
     def createEdit(
-        model: String,
+        model: Model,
         input: String,
         instruction: String,
         n: Int = 1,
@@ -499,7 +499,7 @@ class OpenAI(apiKey: String) {
       *   to monitor and detect abuse.
       */
     def createEmbeddings(
-        model: String,
+        model: Model,
         input: String,
         user: Option[String]
     ): ZIO[Any, Throwable, Embedding.EmbeddingResponse] =
