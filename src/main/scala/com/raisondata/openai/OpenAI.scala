@@ -148,11 +148,11 @@ class OpenAI(apiKey: String) {
       *   Image</a>
       */
     def generateImage(
-        prompt: String,
-        user: Option[String],
-        size: Pixel = Px1024x1024,
-        responseFormat: ResponseFormat = ResponseFormat.url,
-        numberOfImages: Option[Int] = Some(1)
+                       prompt: String,
+                       user: Option[String],
+                       size: Pixel = `1024x1024`,
+                       responseFormat: ResponseFormat = ResponseFormat.url,
+                       numberOfImages: Option[Int] = Some(1)
     ): ZIO[Any, Throwable, GenerateImage.ImageResponse] =
       GenerateImage.generateImage(
         prompt,
@@ -194,13 +194,13 @@ class OpenAI(apiKey: String) {
       *   image edit</a>
       */
     def editImage(
-        imageToEditPath: String,
-        prompt: String,
-        user: Option[String],
-        size: Pixel = Px1024x1024,
-        responseFormat: ResponseFormat = ResponseFormat.url,
-        imageMaskPath: Option[String] = None,
-        numberOfImages: Option[Int] = Some(1) // default 1
+                   imageToEditPath: String,
+                   prompt: String,
+                   user: Option[String],
+                   size: Pixel = `1024x1024`,
+                   responseFormat: ResponseFormat = ResponseFormat.url,
+                   imageMaskPath: Option[String] = None,
+                   numberOfImages: Option[Int] = Some(1) // default 1
     ): ZIO[Any, Throwable, EditImage.ImageResponse] =
       EditImage.editImage(
         imageToEditPath,
@@ -236,11 +236,11 @@ class OpenAI(apiKey: String) {
       *   image variation</a>
       */
     def getVariations(
-        imagePath: String,
-        user: Option[String],
-        size: Pixel = Px1024x1024,
-        responseFormat: ResponseFormat = ResponseFormat.url,
-        numberOfImages: Option[Int] = Some(1) // default 1
+                       imagePath: String,
+                       user: Option[String],
+                       size: Pixel = `1024x1024`,
+                       responseFormat: ResponseFormat = ResponseFormat.url,
+                       numberOfImages: Option[Int] = Some(1) // default 1
     ): ZIO[Any, Throwable, ImageVariation.ImageResponse] =
       ImageVariation.getVariations(
         imagePath,
