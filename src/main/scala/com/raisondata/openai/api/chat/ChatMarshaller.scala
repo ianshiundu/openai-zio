@@ -45,6 +45,7 @@ trait ChatMarshaller {
   case class ChatResponse(
       id: String,
       `object`: String,
+      created: Long,
       model: String,
       choices: List[Choices],
       usage: Usage
@@ -62,5 +63,3 @@ trait ChatMarshaller {
     implicit val decoder: Decoder[ChatResponse] = deriveDecoder[ChatResponse]
   }
 }
-
-//object ChatMarshaller extends ChatMarshaller

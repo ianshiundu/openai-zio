@@ -1,7 +1,10 @@
 package com.raisondata.openai.api.completions
 
+import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.semiauto._
+
+import java.sql.Timestamp
 
 trait CompletionMarshaller {
   case class CompletionRequest(
@@ -44,6 +47,7 @@ trait CompletionMarshaller {
   case class CompletionResponse(
       id: String,
       `object`: String,
+      created: Long,
       model: String,
       choices: List[Choices],
       usage: Usage

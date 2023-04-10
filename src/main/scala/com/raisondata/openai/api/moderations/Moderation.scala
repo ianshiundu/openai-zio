@@ -28,15 +28,19 @@ object Moderation extends SttpConfig with ModerationMarshaller {
 
       val response = getResponse(request)(backend)
 
-      response
-        .map(_.body match {
-          case Left(error) =>
-            println(s"An error occurred while making a request $error")
-            throw new RuntimeException(error)
-          case Right(value) =>
-            println(s"Text moderation results were returned successfully!")
-            println(value)
-            value
-        })
+      response.flatMap(_.body match {
+        case Left(error) =>
+          for {
+            _ <- ZIO.logError(
+              s"An error occurred while making a request $error"
+            )
+          } yield throw new RuntimeException(error)
+        case Right(response) =>
+          for {
+            _ <- ZIO.logInfo(
+              "Text moderation results were returned successfully!"
+            )
+          } yield response
+      })
     }
 }
