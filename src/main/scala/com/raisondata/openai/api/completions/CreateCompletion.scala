@@ -1,6 +1,7 @@
 package com.raisondata.openai.api.completions
 
-import com.raisondata.openai.SttpConfig
+import com.raisondata.openai.Model.Model
+import com.raisondata.openai.{Model, SttpConfig}
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
@@ -14,28 +15,28 @@ object CreateCompletion extends SttpConfig with CompletionMarshaller {
   override val uri = uri"https://api.openai.com/v1/$domain"
 
   def createCompletion(
-      model: String,
-      prompt: String,
-      user: Option[String],
-      max_tokens: Int,
-      temperature: Double,
-      top_p: Double,
-      n: Int,
-      stream: Boolean,
-      echo: Boolean,
-      presence_penalty: Double,
-      frequency_penalty: Double,
-      best_of: Int,
-      logit_bias: Map[String, Double],
-      stop: Option[Array[String]],
-      logprobs: Option[Int],
-      suffix: Option[String]
+                        model: Model,
+                        prompt: String,
+                        user: Option[String],
+                        max_tokens: Int,
+                        temperature: Double,
+                        top_p: Double,
+                        n: Int,
+                        stream: Boolean,
+                        echo: Boolean,
+                        presence_penalty: Double,
+                        frequency_penalty: Double,
+                        best_of: Int,
+                        logit_bias: Map[String, Double],
+                        stop: Option[Array[String]],
+                        logprobs: Option[Int],
+                        suffix: Option[String]
   )(
       openaiAPIKey: String
   ): ZIO[Any, Throwable, CreateCompletion.CompletionResponse] =
     HttpClientZioBackend().flatMap { backend =>
       val requestBody = CompletionRequest(
-        model,
+        Model.parse(model),
         prompt,
         suffix,
         max_tokens,
@@ -53,18 +54,21 @@ object CreateCompletion extends SttpConfig with CompletionMarshaller {
         user
       )
 
-      val request = requestWithJsonBody(requestBody, asJson[CompletionResponse])(openaiAPIKey)
+      val request =
+        requestWithJsonBody(requestBody, asJson[CompletionResponse])(
+          openaiAPIKey
+        )
       val response = getResponse(request)(backend)
 
-      response.map(_.body match {
+      response.flatMap(_.body match {
         case Left(error) =>
-          println(s"An error occurred while making a request $error")
-          throw new RuntimeException(error)
-        case Right(value) =>
-          println(s"Text completion was successful!")
-          println(value)
-          value
+          for {
+            _ <- ZIO.logError(s"An error occurred while making a request $error")
+          } yield throw new RuntimeException(error)
+        case Right(response) =>
+          for {
+            _ <- ZIO.logInfo("Text completion was successful!")
+          } yield response
       })
-
     }
 }

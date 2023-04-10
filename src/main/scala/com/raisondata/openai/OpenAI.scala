@@ -148,11 +148,11 @@ class OpenAI(apiKey: String) {
       *   Image</a>
       */
     def generateImage(
-        prompt: String,
-        user: Option[String],
-        size: Pixel = Px1024x1024,
-        responseFormat: ResponseFormat = ResponseFormat.url,
-        numberOfImages: Option[Int] = Some(1)
+                       prompt: String,
+                       user: Option[String],
+                       size: Pixel = `1024x1024`,
+                       responseFormat: ResponseFormat = ResponseFormat.url,
+                       numberOfImages: Option[Int] = Some(1)
     ): ZIO[Any, Throwable, GenerateImage.ImageResponse] =
       GenerateImage.generateImage(
         prompt,
@@ -194,13 +194,13 @@ class OpenAI(apiKey: String) {
       *   image edit</a>
       */
     def editImage(
-        imageToEditPath: String,
-        prompt: String,
-        user: Option[String],
-        size: Pixel = Px1024x1024,
-        responseFormat: ResponseFormat = ResponseFormat.url,
-        imageMaskPath: Option[String] = None,
-        numberOfImages: Option[Int] = Some(1) // default 1
+                   imageToEditPath: String,
+                   prompt: String,
+                   user: Option[String],
+                   size: Pixel = `1024x1024`,
+                   responseFormat: ResponseFormat = ResponseFormat.url,
+                   imageMaskPath: Option[String] = None,
+                   numberOfImages: Option[Int] = Some(1) // default 1
     ): ZIO[Any, Throwable, EditImage.ImageResponse] =
       EditImage.editImage(
         imageToEditPath,
@@ -236,11 +236,11 @@ class OpenAI(apiKey: String) {
       *   image variation</a>
       */
     def getVariations(
-        imagePath: String,
-        user: Option[String],
-        size: Pixel = Px1024x1024,
-        responseFormat: ResponseFormat = ResponseFormat.url,
-        numberOfImages: Option[Int] = Some(1) // default 1
+                       imagePath: String,
+                       user: Option[String],
+                       size: Pixel = `1024x1024`,
+                       responseFormat: ResponseFormat = ResponseFormat.url,
+                       numberOfImages: Option[Int] = Some(1) // default 1
     ): ZIO[Any, Throwable, ImageVariation.ImageResponse] =
       ImageVariation.getVariations(
         imagePath,
@@ -331,7 +331,7 @@ class OpenAI(apiKey: String) {
       *   The suffix that comes after a completion of inserted text.
       */
     def createCompletion(
-        model: String, // update this later to use Model ADT
+        model: Model,
         prompt: String = "<|endoftext|>",
         user: Option[String],
         max_tokens: Int = 16,
@@ -416,7 +416,7 @@ class OpenAI(apiKey: String) {
       *   Modify the likelihood of specified tokens appearing in the completion.
       */
     def createChat(
-        model: String, // update this later to use Model ADT
+        model: Model,
         messages: List[CreateChat.Message],
         user: Option[String],
         temperature: Double = 1,
@@ -471,7 +471,7 @@ class OpenAI(apiKey: String) {
       *   How many chat completion choices to generate for each input message.
       */
     def createEdit(
-        model: String,
+        model: Model,
         input: String,
         instruction: String,
         n: Int = 1,
@@ -499,7 +499,7 @@ class OpenAI(apiKey: String) {
       *   to monitor and detect abuse.
       */
     def createEmbeddings(
-        model: String,
+        model: Model,
         input: String,
         user: Option[String]
     ): ZIO[Any, Throwable, Embedding.EmbeddingResponse] =

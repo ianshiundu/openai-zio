@@ -1,6 +1,7 @@
 package com.raisondata.openai.api.chat
 
-import com.raisondata.openai.SttpConfig
+import com.raisondata.openai.Model.Model
+import com.raisondata.openai.{Model, SttpConfig}
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
 import zio._
@@ -11,7 +12,7 @@ object CreateChat extends SttpConfig with ChatMarshaller {
   override def usage: String = "completions"
 
   def createChat(
-      model: String,
+      model: Model,
       messages: List[Message],
       user: Option[String],
       temperature: Double,
@@ -26,7 +27,7 @@ object CreateChat extends SttpConfig with ChatMarshaller {
   )(openaiAPIKey: String): ZIO[Any, Throwable, CreateChat.ChatResponse] =
     HttpClientZioBackend().flatMap { backend =>
       val requestBody = ChatRequest(
-        model,
+        Model.parse(model),
         messages,
         user,
         max_tokens,
@@ -44,14 +45,17 @@ object CreateChat extends SttpConfig with ChatMarshaller {
         requestWithJsonBody(requestBody, asJson[ChatResponse])(openaiAPIKey)
       val response = getResponse(request)(backend)
 
-      response.map(_.body match {
+      response.flatMap(_.body match {
         case Left(error) =>
-          println(s"An error occurred while making a request $error")
-          throw new RuntimeException(error)
-        case Right(value) =>
-          println(s"Chat reply was successful returned!")
-          println(value)
-          value
+          for {
+            _ <- ZIO.logError(
+              s"An error occurred while making a request $error"
+            )
+          } yield throw new RuntimeException(error)
+        case Right(response) =>
+          for {
+            _ <- ZIO.logInfo("Chat reply was successfully returned!")
+          } yield response
       })
     }
 }

@@ -9,7 +9,7 @@ trait FileMarshaller {
       id: Option[String],
       `object`: Option[String],
       bytes: Option[Int],
-      created_at: Option[String],
+      created_at: Option[Long],
       filename: Option[String],
       purpose: Option[String],
       deleted: Option[Boolean]

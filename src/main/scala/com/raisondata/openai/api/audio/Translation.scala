@@ -47,15 +47,15 @@ object Translation extends SttpConfig with AudioMarshaller {
         requestWithMultipartForm(body, asJson[TextResponse])(openaiAPIKey)
       val response = getResponse(request)(backend)
 
-      response.map(_.body match {
+      response.flatMap(_.body match {
         case Left(error) =>
-          println(s"An error occurred while making a request $error")
-          throw new RuntimeException(error)
-        case Right(value) =>
-          println(s"Audio was transcribed successfully!")
-          println(value)
-          value
+          for {
+            _ <- ZIO.logError(s"An error occurred while making a request $error")
+          } yield throw new RuntimeException(error)
+        case Right(response) =>
+          for {
+            _ <- ZIO.logInfo("Audio was translated successfully!")
+          } yield response
       })
-
     }
 }
