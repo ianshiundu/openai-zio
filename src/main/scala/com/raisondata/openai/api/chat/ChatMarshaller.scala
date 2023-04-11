@@ -1,10 +1,11 @@
 package com.raisondata.openai.api.chat
 
+import com.raisondata.openai.Role.Role
 import io.circe._
 import io.circe.generic.semiauto._
 
 trait ChatMarshaller {
-  case class Message(role: String, content: String)
+  case class Message(role: Role, content: String)
 
   case class ChatRequest(
       model: String,

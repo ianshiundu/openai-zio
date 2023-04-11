@@ -9,6 +9,7 @@ import com.raisondata.openai.api.completions.CreateCompletion
 import com.raisondata.openai.api.edits.Edit
 import com.raisondata.openai.api.embedding.Embedding
 import com.raisondata.openai.api.files.File
+import com.raisondata.openai.api.fine_tunes.FineTune
 import com.raisondata.openai.api.images.{
   EditImage,
   GenerateImage,
@@ -148,11 +149,11 @@ class OpenAI(apiKey: String) {
       *   Image</a>
       */
     def generateImage(
-                       prompt: String,
-                       user: Option[String],
-                       size: Pixel = `1024x1024`,
-                       responseFormat: ResponseFormat = ResponseFormat.url,
-                       numberOfImages: Option[Int] = Some(1)
+        prompt: String,
+        user: Option[String],
+        size: Pixel = `1024x1024`,
+        responseFormat: ResponseFormat = ResponseFormat.url,
+        numberOfImages: Option[Int] = Some(1)
     ): ZIO[Any, Throwable, GenerateImage.ImageResponse] =
       GenerateImage.generateImage(
         prompt,
@@ -194,13 +195,13 @@ class OpenAI(apiKey: String) {
       *   image edit</a>
       */
     def editImage(
-                   imageToEditPath: String,
-                   prompt: String,
-                   user: Option[String],
-                   size: Pixel = `1024x1024`,
-                   responseFormat: ResponseFormat = ResponseFormat.url,
-                   imageMaskPath: Option[String] = None,
-                   numberOfImages: Option[Int] = Some(1) // default 1
+        imageToEditPath: String,
+        prompt: String,
+        user: Option[String],
+        size: Pixel = `1024x1024`,
+        responseFormat: ResponseFormat = ResponseFormat.url,
+        imageMaskPath: Option[String] = None,
+        numberOfImages: Option[Int] = Some(1) // default 1
     ): ZIO[Any, Throwable, EditImage.ImageResponse] =
       EditImage.editImage(
         imageToEditPath,
@@ -236,11 +237,11 @@ class OpenAI(apiKey: String) {
       *   image variation</a>
       */
     def getVariations(
-                       imagePath: String,
-                       user: Option[String],
-                       size: Pixel = `1024x1024`,
-                       responseFormat: ResponseFormat = ResponseFormat.url,
-                       numberOfImages: Option[Int] = Some(1) // default 1
+        imagePath: String,
+        user: Option[String],
+        size: Pixel = `1024x1024`,
+        responseFormat: ResponseFormat = ResponseFormat.url,
+        numberOfImages: Option[Int] = Some(1) // default 1
     ): ZIO[Any, Throwable, ImageVariation.ImageResponse] =
       ImageVariation.getVariations(
         imagePath,
@@ -569,5 +570,109 @@ class OpenAI(apiKey: String) {
     def retrieveFile(fileId: String): ZIO[Any, Throwable, File.FileResponse] =
       File.retrieveFile(fileId)(apiKey)
   }
+
+  /** Manage fine-tuning jobs to tailor a model to your specific training data.
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/fine-tunes">Fine-tunes</a>
+    */
+  object FineTunes {
+
+    /** Creates a job that fine-tunes a specified model from a given dataset.
+      * @see
+      *   <a
+      *   href="https://platform.openai.com/docs/api-reference/fine-tune/create">Create
+      *   fine-tunes</a>
+      */
+    def createFineTune(
+        trainingFile: String,
+        model: Model = Model.curie,
+        nEpochs: Int = 4,
+        promptLossWeight: Double = 0.01,
+        computeClassificationMetrics: Boolean = false,
+        classificationNClasses: Option[Int] = None,
+        classificationPositiveClass: Option[String] = None,
+        classificationBetas: Option[Array[String]] = None,
+        batchSize: Option[Int] = None,
+        learningRateMultiplier: Option[Double] = None,
+        validationFile: Option[String] = None,
+        suffix: Option[String] = None
+    ): ZIO[Any, Throwable, FineTune.FineTuneResponse] = FineTune.createFineTune(
+      trainingFile,
+      model,
+      nEpochs,
+      promptLossWeight,
+      computeClassificationMetrics,
+      classificationNClasses,
+      classificationPositiveClass,
+      classificationBetas,
+      batchSize,
+      learningRateMultiplier,
+      validationFile,
+      suffix
+    )(apiKey)
+  }
+
+  /** List your organization's fine-tuning jobs
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/fine-tunes/list">List
+    *   fine-tunes</a>
+    */
+  def listFineTunes: ZIO[Any, Throwable, FineTune.ListFineTuneResponse] =
+    FineTune.listFineTunes(apiKey)
+
+  /** Gets info about the fine-tune job.
+    * @param fineTuneId
+    *   The ID of the fine-tune job
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/fine-tunes/retrieve">Retrieve
+    *   fine-tune</a>
+    */
+  def retrieveFineTuneJob(
+      fineTuneId: String
+  ): ZIO[Any, Throwable, FineTune.FineTuneResponse] =
+    FineTune.retrieveFineTuneJob(fineTuneId)(apiKey)
+
+  /** Immediately cancel a fine-tune job.
+    * @param fineTuneId
+    *   The ID of the fine-tune job to cancel
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/fine-tunes/cancel">Cancel
+    *   fine-tune</a>
+    */
+  def cancelFineTuneJob(
+      fineTuneId: String
+  ): ZIO[Any, Throwable, FineTune.FineTuneResponse] =
+    FineTune.cancelFineTuneJob(fineTuneId)(apiKey)
+
+  /** Get fine-grained status updates for a fine-tune job.
+    * @param fineTuneId
+    *   The ID of the fine-tune job to get events for.
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/fine-tunes/events">List
+    *   fine-tune events</a>
+    */
+  def listFineTuneEvents(
+      fineTuneId: String
+  ): ZIO[Any, Throwable, FineTune.ListFineTuneEvents] =
+    FineTune.listFineTuneEvents(fineTuneId)(apiKey)
+
+  /** Delete a fine-tuned model. You must have the Owner role in your
+    * organization.
+    * @param model
+    *   The model to delete
+    * @see
+    *   <a
+    *   href="https://platform.openai.com/docs/api-reference/fine-tunes/delete-model">Delete
+    *   fine-tune model</a>
+    */
+  def deleteFineTuneModel(
+      model: String
+  ): ZIO[Any, Throwable, FineTune.DeleteModelResponse] =
+    FineTune.deleteFineTuneModel(model)(apiKey)
 
 }
