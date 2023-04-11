@@ -34,9 +34,9 @@ val service = new OpenAI("YOUR_API_KEY")
 ```
 
 ## Supported APIs
-### 1. [Models](https://platform.openai.com/docs/api-reference/models)
+### [1. Models](https://platform.openai.com/docs/api-reference/models)
 
-To access the Models API, you can access it through `yourOpenAIInstance.Models._`:
+You can access the Models API through `yourOpenAIInstance.Models._`:
 ```scala
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
 import com.raisondata.openai.OpenAI
@@ -54,9 +54,9 @@ object Main extends ZIOAppDefault {
   }
 }
 ```
-### 2. [Completions](https://platform.openai.com/docs/api-reference/completions)
+### [2. Completions](https://platform.openai.com/docs/api-reference/completions)
 
-To access the Completions API, you can access it through `yourOpenAIInstance.Completions.createCompletion`:
+You can access the Completions API through `yourOpenAIInstance.Completions.createCompletion`:
 ```scala
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
 import com.raisondata.openai.OpenAI
@@ -81,9 +81,9 @@ object Main extends ZIOAppDefault {
 }
 ```
 
-### 3. [Chat](https://platform.openai.com/docs/api-reference/chat)
+### [3. Chat](https://platform.openai.com/docs/api-reference/chat)
 
-To access the Chat API (non-streaming), you can access it through `yourOpenAIInstance.Chat.createChat`:
+You can access the Chat API (non-streaming) through `yourOpenAIInstance.Chat.createChat`:
 
 ```scala
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
@@ -108,9 +108,9 @@ object Main extends ZIOAppDefault {
   }
 }
 ```
-### 4. [Edits](https://platform.openai.com/docs/api-reference/edits)
+### [4. Edits](https://platform.openai.com/docs/api-reference/edits)
 
-To access the Edits API, you can access it through `yourOpenAIInstance.Edits.createEdit`:
+You can access the Edits API through `yourOpenAIInstance.Edits.createEdit`:
 ```scala
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
 import com.raisondata.openai.OpenAI
@@ -134,7 +134,7 @@ object Main extends ZIOAppDefault {
   }
 }
 ```
-### 5. [Images](https://platform.openai.com/docs/api-reference/images)
+### [5. Images](https://platform.openai.com/docs/api-reference/images)
 
 You can access the Images APIs through `yourOpenAIInstance.Images._`:
 ```scala
@@ -160,7 +160,7 @@ object Main extends ZIOAppDefault {
   }
 }
 ```
-### 6. [Embeddings](https://platform.openai.com/docs/api-reference/embeddings)
+### [6. Embeddings](https://platform.openai.com/docs/api-reference/embeddings)
 
 You can access the Embeddings API through `yourOpenAIInstance.Embeddings.createEmbeddings`:
 ```scala
@@ -186,7 +186,7 @@ object Main extends ZIOAppDefault {
   }
 }
 ```
-### 7. [Files](https://platform.openai.com/docs/api-reference/files)
+### [7. Files](https://platform.openai.com/docs/api-reference/files)
 
 You can access the File APIs through `yourOpenAIInstance.Files._`:
 ```scala
@@ -208,7 +208,7 @@ object Main extends ZIOAppDefault {
   }
 }
 ```
-### 8. [Moderations](https://platform.openai.com/docs/api-reference/moderations)
+### [8. Moderations](https://platform.openai.com/docs/api-reference/moderations)
 
 You can access the Moderation API through `yourOpenAIInstance.Moderations.createModeration`:
 ```scala
@@ -233,8 +233,31 @@ object Main extends ZIOAppDefault {
 }
 ```
 
+### [9. Fine-tunes](https://platform.openai.com/docs/api-reference/fine-tunes)
+
+You can access the Fine-tunes API through `yourOpenAIInstance.Moderations.createModeration`:
+```scala
+import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
+import com.raisondata.openai.OpenAI
+import com.raisondata.openai.Model
+
+object Main extends ZIOAppDefault {
+
+  override def run: ZIO[Environment with ZIOAppArgs with Scope, Any, Any] = {
+
+    val service = new OpenAI("YOUR_API_KEY")
+
+    for {
+      response <-
+        service.FineTunes.createFineTune(
+          trainingFile = "id_of_uploaded_file"
+        )
+      _ <- ZIO.logInfo(s"Got back a response: $response")
+    } yield response
+  }
+}
+```
+
 ## TODO
-- [x] Fine-tunes API
-- [x] Chat User roles ADT ("system", "user", or "assistant")
 - [ ] Validations i.e. Temperature value, Model types e.t.c.
 - [ ] Unit tests
