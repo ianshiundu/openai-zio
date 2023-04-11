@@ -87,8 +87,7 @@ To access the Chat API (non-streaming), you can access it through `yourOpenAIIns
 
 ```scala
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
-import com.raisondata.openai.OpenAI
-import com.raisondata.openai.Model
+import com.raisondata.openai._
 import com.raisondata.openai.api.chat.CreateChat
 
 object Main extends ZIOAppDefault {
@@ -101,7 +100,7 @@ object Main extends ZIOAppDefault {
       response <-
         service.Chat.createChat(
           model = Model.gpt_3_5_turbo,
-          messages = List(CreateChat.Message("user", "Hello!")),
+          messages = List(CreateChat.Message(Role.user, "Hello!")), // Role.user, Role.assistant, Role.system
           user = Some("end-user-id")
         )
       _ <- ZIO.logInfo(s"Got back a response: $response")
@@ -235,7 +234,7 @@ object Main extends ZIOAppDefault {
 ```
 
 ## TODO
-- [ ] Fine-tunes API
-- [ ] Chat User roles ADT ("system", "user", or "assistant")
+- [x] Fine-tunes API
+- [x] Chat User roles ADT ("system", "user", or "assistant")
 - [ ] Validations i.e. Temperature value, Model types e.t.c.
-- [ ] Streaming APIs for Text & Chat completion
+- [ ] Unit tests
