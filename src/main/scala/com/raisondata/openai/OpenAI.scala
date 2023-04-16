@@ -18,6 +18,7 @@ import com.raisondata.openai.api.images.{
 import com.raisondata.openai.api.models.OpenAIModels
 import com.raisondata.openai.api.moderations.Moderation
 import zio.ZIO
+import sttp.client4.httpclient.zio.HttpClientZioBackend
 
 /** @param apiKey
   *   OpenAI's API Key
@@ -29,6 +30,7 @@ class OpenAI(apiKey: String) {
 
   // speech to text API
   /** This is the speech to text API wrapper
+    *
     * @see
     *   <a href="https://platform.openai.com/docs/api-reference/audio">Speech to
     *   Text API</a>
@@ -56,7 +58,6 @@ class OpenAI(apiKey: String) {
       * @param prompt
       *   An optional text to guide the model's style or continue a previous
       *   audio segment. The prompt should be in English.
-      *
       * @see
       *   <a
       *   href="https://platform.openai.com/docs/api-reference/audio/create">Create
@@ -70,14 +71,16 @@ class OpenAI(apiKey: String) {
         language: Language = Language.en,
         prompt: Option[String] = None
     ): ZIO[Any, Throwable, Transcription.TextResponse] =
-      Transcription.transcribe(
-        filePath,
-        model,
-        responseFormat,
-        temperature,
-        language,
-        prompt
-      )(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        Transcription.transcribe(
+          filePath,
+          model,
+          responseFormat,
+          temperature,
+          language,
+          prompt
+        )(apiKey)(backend)
+      }
 
     /** Translates audio into into English.
       *
@@ -120,6 +123,7 @@ class OpenAI(apiKey: String) {
   }
 
   /** Given a prompt and/or an input image, the model will generate a new image.
+    *
     * @see
     *   <a
     *   href="https://platform.openai.com/docs/api-reference/images">Images</a>
@@ -155,13 +159,15 @@ class OpenAI(apiKey: String) {
         responseFormat: ResponseFormat = ResponseFormat.url,
         numberOfImages: Option[Int] = Some(1)
     ): ZIO[Any, Throwable, GenerateImage.ImageResponse] =
-      GenerateImage.generateImage(
-        prompt,
-        size,
-        responseFormat,
-        user,
-        numberOfImages
-      )(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        GenerateImage.generateImage(
+          prompt,
+          size,
+          responseFormat,
+          user,
+          numberOfImages
+        )(apiKey)(backend)
+      }
 
     /** Creates an edited or extended image given an original image and a
       * prompt.
@@ -254,6 +260,7 @@ class OpenAI(apiKey: String) {
   }
 
   /** List and describe the various models available in the API.
+    *
     * @see
     *   <a href="https://platform.openai.com/docs/models">Available Models</a>
     */
@@ -263,15 +270,20 @@ class OpenAI(apiKey: String) {
       * about each one such as the owner and availability.
       */
     def listModels: ZIO[Any, Throwable, OpenAIModels.ListModels] =
-      OpenAIModels.listModels(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        OpenAIModels.listModels(apiKey)(backend)
+      }
 
     /** Retrieves a model instance, providing basic information about the model
       * such as the owner and permissions.
+      *
       * @param model
       *   Required The ID of the model to use for this request
       */
     def getModel(model: String): ZIO[Any, Throwable, OpenAIModels.Model] =
-      OpenAIModels.getModel(model)(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        OpenAIModels.getModel(model)(apiKey)(backend)
+      }
   }
 
   /** Given a prompt, the model will return one or more predicted completions,
@@ -285,6 +297,7 @@ class OpenAI(apiKey: String) {
   object Completions {
 
     /** Creates a completion for the provided prompt and parameters
+      *
       * @param model
       *   Required ID of the model to use. You can use `Models.listModels` to
       *   see all available models
@@ -429,30 +442,35 @@ class OpenAI(apiKey: String) {
         logit_bias: Map[String, Double] = Map(),
         max_tokens: Option[Int] = None,
         stop: Option[Array[String]] = None
-    ): ZIO[Any, Throwable, CreateChat.ChatResponse] = CreateChat.createChat(
-      model,
-      messages,
-      user,
-      temperature,
-      top_p,
-      n,
-      stream,
-      presence_penalty,
-      frequency_penalty,
-      logit_bias,
-      max_tokens,
-      stop
-    )(apiKey)
+    ): ZIO[Any, Throwable, CreateChat.ChatResponse] =
+      HttpClientZioBackend().flatMap { backend =>
+        CreateChat.createChat(
+          model,
+          messages,
+          user,
+          temperature,
+          top_p,
+          n,
+          stream,
+          presence_penalty,
+          frequency_penalty,
+          logit_bias,
+          max_tokens,
+          stop
+        )(apiKey)(backend)
+      }
   }
 
   /** Given a prompt and an instruction, the model will return an edited version
     * of the prompt.
+    *
     * @see
     *   <a href="https://platform.openai.com/docs/api-reference/edits">Edits</a>
     */
   object Edits {
 
     /** Creates a new edit for the provided input, instruction, and parameters.
+      *
       * @param model
       *   Required ID of the model to use. You can use `Models.listModels` to
       *   see all available models
@@ -472,18 +490,23 @@ class OpenAI(apiKey: String) {
       *   How many chat completion choices to generate for each input message.
       */
     def createEdit(
-        model: Model,
         input: String,
         instruction: String,
+        model: Model = Model.text_davinci_edit_001,
         n: Int = 1,
         temperature: Double = 1,
         top_p: Double = 1
-    ): ZIO[Any, Throwable, Edit.EditResponse] =
-      Edit.createEdit(model, input, instruction, n, temperature, top_p)(apiKey)
+    ): ZIO[Any, Throwable, Edit.EditResponse] = HttpClientZioBackend().flatMap {
+      backend =>
+        Edit.createEdit(model, input, instruction, n, temperature, top_p)(
+          apiKey
+        )(backend)
+    }
   }
 
   /** Get a vector representation of a given input that can be easily consumed
     * by machine learning models and algorithms.
+    *
     * @see
     *   <a
     *   href="https://platform.openai.com/docs/api-reference/embeddings">Embeddings</a>
@@ -491,6 +514,7 @@ class OpenAI(apiKey: String) {
   object Embeddings {
 
     /** Creates an embedding vector representing the input text.
+      *
       * @param model
       *   ID of the model to use.
       * @param input
@@ -504,7 +528,9 @@ class OpenAI(apiKey: String) {
         input: String,
         user: Option[String]
     ): ZIO[Any, Throwable, Embedding.EmbeddingResponse] =
-      Embedding.createEmbeddings(model, input, user)(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        Embedding.createEmbeddings(model, input, user)(apiKey)(backend)
+      }
   }
 
   /** Given a input text, outputs if the model classifies it as violating
@@ -517,6 +543,7 @@ class OpenAI(apiKey: String) {
   object Moderations {
 
     /** Classifies if text violates OpenAI's Content Policy
+      *
       * @param input
       *   The input text to classify
       * @param model
@@ -527,7 +554,9 @@ class OpenAI(apiKey: String) {
         input: String,
         model: Model = Model.text_moderation_latest
     ): ZIO[Any, Throwable, Moderation.ModerationResponse] =
-      Moderation.createModeration(input, model)(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        Moderation.createModeration(input, model)(apiKey)(backend)
+      }
   }
 
   /** Files are used to upload documents that can be used with features like
@@ -540,10 +569,13 @@ class OpenAI(apiKey: String) {
 
     /** Returns a list of files that belong to the user's organization. */
     def listFiles: ZIO[Any, Throwable, File.FileResponse] =
-      File.listFiles(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        File.listFiles(apiKey)(backend)
+      }
 
     /** Upload a file that contains document(s) to be used across various
       * endpoints/features.
+      *
       * @param filePath
       *   Required Name of the JSON Lines file to be uploaded.
       * @param purpose
@@ -556,14 +588,17 @@ class OpenAI(apiKey: String) {
       File.uploadFile(filePath, purpose)(apiKey)
 
     /** Delete a file.
+      *
       * @param fileId
       *   Required The ID of the file to use for this request
       */
     def deleteFile(
         fileId: String
-    ): ZIO[Any, Throwable, File.FileResponse] = File.deleteFile(fileId)(apiKey)
+    ): ZIO[Any, Throwable, File.FileResponse] =
+      File.deleteFile(fileId)(apiKey)
 
     /** Returns information about a specific file.
+      *
       * @param fileId
       *   Required The ID of the file to use for this request.
       */
@@ -572,6 +607,7 @@ class OpenAI(apiKey: String) {
   }
 
   /** Manage fine-tuning jobs to tailor a model to your specific training data.
+    *
     * @see
     *   <a
     *   href="https://platform.openai.com/docs/api-reference/fine-tunes">Fine-tunes</a>
@@ -579,6 +615,7 @@ class OpenAI(apiKey: String) {
   object FineTunes {
 
     /** Creates a job that fine-tunes a specified model from a given dataset.
+      *
       * @see
       *   <a
       *   href="https://platform.openai.com/docs/api-reference/fine-tune/create">Create
@@ -597,23 +634,25 @@ class OpenAI(apiKey: String) {
         learningRateMultiplier: Option[Double] = None,
         validationFile: Option[String] = None,
         suffix: Option[String] = None
-    ): ZIO[Any, Throwable, FineTune.FineTuneResponse] = FineTune.createFineTune(
-      trainingFile,
-      model,
-      nEpochs,
-      promptLossWeight,
-      computeClassificationMetrics,
-      classificationNClasses,
-      classificationPositiveClass,
-      classificationBetas,
-      batchSize,
-      learningRateMultiplier,
-      validationFile,
-      suffix
-    )(apiKey)
+    ): ZIO[Any, Throwable, FineTune.FineTuneResponse] =
+      FineTune.createFineTune(
+        trainingFile,
+        model,
+        nEpochs,
+        promptLossWeight,
+        computeClassificationMetrics,
+        classificationNClasses,
+        classificationPositiveClass,
+        classificationBetas,
+        batchSize,
+        learningRateMultiplier,
+        validationFile,
+        suffix
+      )(apiKey)
   }
 
   /** List your organization's fine-tuning jobs
+    *
     * @see
     *   <a
     *   href="https://platform.openai.com/docs/api-reference/fine-tunes/list">List
@@ -623,6 +662,7 @@ class OpenAI(apiKey: String) {
     FineTune.listFineTunes(apiKey)
 
   /** Gets info about the fine-tune job.
+    *
     * @param fineTuneId
     *   The ID of the fine-tune job
     * @see
@@ -636,6 +676,7 @@ class OpenAI(apiKey: String) {
     FineTune.retrieveFineTuneJob(fineTuneId)(apiKey)
 
   /** Immediately cancel a fine-tune job.
+    *
     * @param fineTuneId
     *   The ID of the fine-tune job to cancel
     * @see
@@ -649,6 +690,7 @@ class OpenAI(apiKey: String) {
     FineTune.cancelFineTuneJob(fineTuneId)(apiKey)
 
   /** Get fine-grained status updates for a fine-tune job.
+    *
     * @param fineTuneId
     *   The ID of the fine-tune job to get events for.
     * @see
@@ -663,6 +705,7 @@ class OpenAI(apiKey: String) {
 
   /** Delete a fine-tuned model. You must have the Owner role in your
     * organization.
+    *
     * @param model
     *   The model to delete
     * @see
