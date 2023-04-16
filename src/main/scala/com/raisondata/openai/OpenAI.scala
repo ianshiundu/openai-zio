@@ -18,7 +18,6 @@ import com.raisondata.openai.api.images.{
 import com.raisondata.openai.api.models.OpenAIModels
 import com.raisondata.openai.api.moderations.Moderation
 import zio.ZIO
-import JsonMarshaller._
 import sttp.client4.httpclient.zio.HttpClientZioBackend
 
 /** @param apiKey
@@ -28,7 +27,7 @@ import sttp.client4.httpclient.zio.HttpClientZioBackend
   *   href="https://platform.openai.com/docs/api-reference/authentication">Authentication:</a>
   */
 class OpenAI(apiKey: String) {
-//  HttpClientZioBackend().flatMap { implicit backend =>
+
   // speech to text API
   /** This is the speech to text API wrapper
     *
@@ -426,7 +425,7 @@ class OpenAI(apiKey: String) {
       */
     def createChat(
         model: Model,
-        messages: List[Message],
+        messages: List[CreateChat.Message],
         user: Option[String],
         temperature: Double = 1,
         top_p: Double = 1,
@@ -437,7 +436,7 @@ class OpenAI(apiKey: String) {
         logit_bias: Map[String, Double] = Map(),
         max_tokens: Option[Int] = None,
         stop: Option[Array[String]] = None
-    ): ZIO[Any, Throwable, ChatResponse] = HttpClientZioBackend().flatMap {
+    ): ZIO[Any, Throwable, CreateChat.ChatResponse] = HttpClientZioBackend().flatMap {
       backend =>
         CreateChat.createChat(
           model,
@@ -706,5 +705,5 @@ class OpenAI(apiKey: String) {
       model: String
   ): ZIO[Any, Throwable, FineTune.DeleteModelResponse] =
     FineTune.deleteFineTuneModel(model)(apiKey)
-//  }
+
 }
