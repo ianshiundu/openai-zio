@@ -7,7 +7,6 @@ import com.raisondata.openai._
 import sttp.capabilities.zio.ZioStreams
 import sttp.client4._
 import sttp.client4.circe._
-import sttp.client4.httpclient.zio._
 import zio._
 
 import java.io.File

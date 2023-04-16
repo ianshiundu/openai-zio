@@ -1,15 +1,15 @@
 package com.raisondata.openai.api.chat
 
-import com.raisondata.openai.JsonMarshaller._
+
 import com.raisondata.openai.Model.Model
-import com.raisondata.openai.{JsonMarshaller, Model, SttpConfig}
+import com.raisondata.openai.{Model, SttpConfig}
 import io.circe
 import sttp.capabilities.zio.ZioStreams
 import sttp.client4.circe._
 import sttp.client4.{ResponseException, WebSocketStreamBackend}
 import zio._
 
-object CreateChat extends SttpConfig {
+object CreateChat extends SttpConfig with ChatMarshaller {
   override def domain: String = "chat"
 
   override def usage: String = "completions"
