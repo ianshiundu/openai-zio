@@ -13,6 +13,8 @@ lazy val root = (project in file("."))
       "com.softwaremill.sttp.client4" %% "circe" % "4.0.0-M1",
       "com.softwaremill.retry" %% "retry" % "0.3.6",
       "io.circe" %% "circe-core" % "0.14.1",
-      "io.circe" %% "circe-generic" % "0.14.1"
+      "io.circe" %% "circe-generic" % "0.14.1",
+      "dev.zio" %% "zio-test" % "2.0.12" % Test,
+      "dev.zio" %% "zio-mock" % "1.0.0-RC10" % Test
     )
   )

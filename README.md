@@ -125,7 +125,6 @@ object Main extends ZIOAppDefault {
     for {
       response <-
         service.Edits.createEdit(
-          model = Model.text_davinci_edit_001,
           input = "What day of the wek is it?",
           instruction = "Fix the spelling mistakes"
         )
