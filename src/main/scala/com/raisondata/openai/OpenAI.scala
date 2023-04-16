@@ -159,13 +159,15 @@ class OpenAI(apiKey: String) {
         responseFormat: ResponseFormat = ResponseFormat.url,
         numberOfImages: Option[Int] = Some(1)
     ): ZIO[Any, Throwable, GenerateImage.ImageResponse] =
-      GenerateImage.generateImage(
-        prompt,
-        size,
-        responseFormat,
-        user,
-        numberOfImages
-      )(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        GenerateImage.generateImage(
+          prompt,
+          size,
+          responseFormat,
+          user,
+          numberOfImages
+        )(apiKey)(backend)
+      }
 
     /** Creates an edited or extended image given an original image and a
       * prompt.
@@ -268,7 +270,9 @@ class OpenAI(apiKey: String) {
       * about each one such as the owner and availability.
       */
     def listModels: ZIO[Any, Throwable, OpenAIModels.ListModels] =
-      OpenAIModels.listModels(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        OpenAIModels.listModels(apiKey)(backend)
+      }
 
     /** Retrieves a model instance, providing basic information about the model
       * such as the owner and permissions.
@@ -277,7 +281,9 @@ class OpenAI(apiKey: String) {
       *   Required The ID of the model to use for this request
       */
     def getModel(model: String): ZIO[Any, Throwable, OpenAIModels.Model] =
-      OpenAIModels.getModel(model)(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        OpenAIModels.getModel(model)(apiKey)(backend)
+      }
   }
 
   /** Given a prompt, the model will return one or more predicted completions,
@@ -436,8 +442,8 @@ class OpenAI(apiKey: String) {
         logit_bias: Map[String, Double] = Map(),
         max_tokens: Option[Int] = None,
         stop: Option[Array[String]] = None
-    ): ZIO[Any, Throwable, CreateChat.ChatResponse] = HttpClientZioBackend().flatMap {
-      backend =>
+    ): ZIO[Any, Throwable, CreateChat.ChatResponse] =
+      HttpClientZioBackend().flatMap { backend =>
         CreateChat.createChat(
           model,
           messages,
@@ -452,7 +458,7 @@ class OpenAI(apiKey: String) {
           max_tokens,
           stop
         )(apiKey)(backend)
-    }
+      }
   }
 
   /** Given a prompt and an instruction, the model will return an edited version
@@ -522,7 +528,9 @@ class OpenAI(apiKey: String) {
         input: String,
         user: Option[String]
     ): ZIO[Any, Throwable, Embedding.EmbeddingResponse] =
-      Embedding.createEmbeddings(model, input, user)(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        Embedding.createEmbeddings(model, input, user)(apiKey)(backend)
+      }
   }
 
   /** Given a input text, outputs if the model classifies it as violating
@@ -546,7 +554,9 @@ class OpenAI(apiKey: String) {
         input: String,
         model: Model = Model.text_moderation_latest
     ): ZIO[Any, Throwable, Moderation.ModerationResponse] =
-      Moderation.createModeration(input, model)(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        Moderation.createModeration(input, model)(apiKey)(backend)
+      }
   }
 
   /** Files are used to upload documents that can be used with features like
@@ -559,7 +569,9 @@ class OpenAI(apiKey: String) {
 
     /** Returns a list of files that belong to the user's organization. */
     def listFiles: ZIO[Any, Throwable, File.FileResponse] =
-      File.listFiles(apiKey)
+      HttpClientZioBackend().flatMap { backend =>
+        File.listFiles(apiKey)(backend)
+      }
 
     /** Upload a file that contains document(s) to be used across various
       * endpoints/features.
