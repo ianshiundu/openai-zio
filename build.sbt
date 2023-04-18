@@ -1,10 +1,19 @@
-ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / version := "0.1.0"
 
 ThisBuild / scalaVersion := "2.13.10"
 
+publishTo := sonatypePublishToBundle.value
+
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+
+ThisBuild / organization := "com.raisondata.openai"
+
+sonatypeCredentialHost := "s01.oss.sonatype.org"
+sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
+
 lazy val root = (project in file("."))
   .settings(
-    name := "openai-scala-client",
+    name := "openai-zio",
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio" % "2.0.1",
       "dev.zio" %% "zio-streams" % "2.0.1",
