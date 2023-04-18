@@ -2,6 +2,21 @@
 
 A simple Scala ZIO wrapper library to use with OpenAI's GPT-3.5+.
 
+## Installation
+To use the library, add the `openai-zio` dependency in you *build.sbt* like so:
+```
+libraryDependencies += "com.raisondata.openai" %% "openai-zio" % "0.1.0"
+```
+or in your *pom.xml* file like so:
+```xml
+<dependency>
+  <groupId>com.raisondata.openai</groupId>
+  <artifactId>openai-zio</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+Note that library supports Scala versions 2.12 and 2.13 at the moment.
+
 ## Example
 
 ```scala
@@ -258,5 +273,4 @@ object Main extends ZIOAppDefault {
 ```
 
 ## TODO
-- [ ] Validations i.e. Temperature value, Model types e.t.c.
-- [ ] Unit tests
+- [ ] Scala 3 support
