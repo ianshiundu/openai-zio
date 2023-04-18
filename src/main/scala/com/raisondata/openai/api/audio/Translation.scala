@@ -9,6 +9,7 @@ import sttp.client4.httpclient.zio._
 import zio._
 
 import java.io.File
+import scala.collection.immutable._
 
 object Translation extends SttpConfig with AudioMarshaller {
   override def domain: String = "audio"
@@ -50,7 +51,9 @@ object Translation extends SttpConfig with AudioMarshaller {
       response.flatMap(_.body match {
         case Left(error) =>
           for {
-            _ <- ZIO.logError(s"An error occurred while making a request $error")
+            _ <- ZIO.logError(
+              s"An error occurred while making a request $error"
+            )
           } yield throw new RuntimeException(error)
         case Right(response) =>
           for {
