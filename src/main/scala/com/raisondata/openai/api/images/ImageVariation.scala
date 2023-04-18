@@ -1,15 +1,14 @@
 package com.raisondata.openai.api.images
 
 import com.raisondata.openai.ResponseFormat.ResponseFormat
-import com.raisondata.openai.helpers.makeRequest
 import com.raisondata.openai.{Pixel, ResponseFormat, SttpConfig}
 import sttp.client4._
 import sttp.client4.circe._
 import sttp.client4.httpclient.zio._
-import sttp.model.MediaType.MultipartFormData
 import zio._
 
 import java.io.File
+import scala.collection.immutable._
 
 object ImageVariation extends SttpConfig with ImageMarshaller {
   override def domain: String = "images"

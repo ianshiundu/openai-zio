@@ -10,6 +10,7 @@ import sttp.model.Uri
 import zio._
 
 import java.io.{File => fle}
+import scala.collection.immutable._
 
 object File extends SttpConfig with FileMarshaller {
   override def domain: String = "files"

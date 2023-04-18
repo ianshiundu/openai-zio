@@ -10,6 +10,7 @@ import sttp.client4.circe._
 import zio._
 
 import java.io.File
+import scala.collection.immutable._
 
 object Transcription extends SttpConfig with AudioMarshaller {
   override def usage: String = "transcriptions"
