@@ -5,6 +5,8 @@ import sttp.capabilities.zio.ZioStreams
 import sttp.model.MediaType.MultipartFormData
 import sttp.model.Part
 
+import scala.collection.immutable._
+
 trait SttpConfig {
 
   import sttp.client4._

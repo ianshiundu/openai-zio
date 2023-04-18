@@ -8,6 +8,7 @@ import sttp.client4.httpclient.zio._
 import zio._
 
 import java.io.File
+import scala.collection.immutable._
 
 object EditImage extends SttpConfig with ImageMarshaller {
   override def domain: String = "images"
